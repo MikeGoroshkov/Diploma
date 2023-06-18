@@ -4,18 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2174de1b-0683-4c71-a0fe-dfda69071a1c" name="Changes" comment="create pycharm project, install pygame, add screen, test hero and level">
-      <change afterPath="$PROJECT_DIR$/fonts/Pangolin-Regular.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hero.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/back_1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/back_2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/back_3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/bullet.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/flash_new.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/ghost_1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/ghost_2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/images/icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/levels.py" afterDir="false" />
+    <list default="true" id="2174de1b-0683-4c71-a0fe-dfda69071a1c" name="Changes" comment="recovery after loss">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,24 +31,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "20ab725e",
-    "last_opened_file_path": "C:/Users/MC/PycharmProjects/Diploma/images",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/MC/PycharmProjects/Diplom&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\MC\PycharmProjects\Diploma\sounds" />
       <recent name="C:\Users\MC\PycharmProjects\Diploma\images" />
       <recent name="C:\Users\MC\PycharmProjects\Diploma\fonts" />
-      <recent name="C:\Users\MC\PycharmProjects\Diploma\sounds" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\MC\PycharmProjects\Diploma\sounds" />
       <recent name="C:\Users\MC\PycharmProjects\Diploma\images" />
+      <recent name="C:\Users\MC\PycharmProjects\Diploma\sounds" />
       <recent name="C:\Users\MC\PycharmProjects\Diploma\fonts" />
     </key>
   </component>
@@ -121,7 +112,14 @@
       <option name="project" value="LOCAL" />
       <updated>1686637085292</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="recovery after loss">
+      <created>1686641208889</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1686641208889</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -137,6 +135,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="create pycharm project, install pygame, add screen, test hero and level" />
-    <option name="LAST_COMMIT_MESSAGE" value="create pycharm project, install pygame, add screen, test hero and level" />
+    <MESSAGE value="recovery after loss" />
+    <option name="LAST_COMMIT_MESSAGE" value="recovery after loss" />
   </component>
 </project>
