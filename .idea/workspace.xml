@@ -5,7 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2174de1b-0683-4c71-a0fe-dfda69071a1c" name="Changes" comment="recovery after loss">
+      <change afterPath="$PROJECT_DIR$/.idea/Diplom.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/interface.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/levels.py" beforeDir="false" afterPath="$PROJECT_DIR$/levels.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -35,6 +39,7 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/MC/PycharmProjects/Diplom&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
@@ -47,6 +52,7 @@
       <recent name="C:\Users\MC\PycharmProjects\Diploma\fonts" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\MC\PycharmProjects\Diplom\images" />
       <recent name="C:\Users\MC\PycharmProjects\Diploma\images" />
       <recent name="C:\Users\MC\PycharmProjects\Diploma\sounds" />
       <recent name="C:\Users\MC\PycharmProjects\Diploma\fonts" />
@@ -54,7 +60,7 @@
   </component>
   <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-      <module name="Diploma" />
+      <module name="Diplom" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>

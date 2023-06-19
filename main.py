@@ -17,7 +17,7 @@ key_sound = pygame.mixer.Sound('sounds/key.mp3')
 gameplay = False
 running = False
 intro = True
-scene_1 = False
+scene = False
 
 intro_sound.play(loops=-1)
 while intro:
@@ -37,69 +37,70 @@ while intro:
     mouse = pygame.mouse.get_pos()
     if start_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
         intro = False
-        scene_1 = True
+        running = True
+        scene = True
     clock.tick(30)
-
-while scene_1:
-    screen.blit(start_bg, (0, 0))
-    screen.blit(continue_label, continue_label_rect)
-    scene_1_label = label_2.render(scene_1_text[scene_line][:scene_label_count], False, (219, 24, 24))
-    if scene_label_count == len(scene_1_text[scene_line]):
-        scene_label_count = 1
-        scene_line += 1
-        # scene_y += 30
-
-    key_sound.play()
-    screen.blit(scene_1_label, (100, scene_y))
-    scene_label_count += 1
-
-    pygame.display.update()
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-
-    if scene_line == len(scene_1_text):
-        scene_1 = False
-        gameplay = True
-        running = True
-        clock.tick(0.5)
-        scene_label_count = 1
-        scene_line = 0
-        scene_y = 20
-
-    mouse = pygame.mouse.get_pos()
-    if continue_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
-        scene_1 = False
-        gameplay = True
-        running = True
-        scene_label_count = 1
-        scene_line = 0
-        scene_y = 20
-
-    clock.tick(15)
 
 intro_sound.stop()
 bg_sound.play(loops=-1)
 
 while running:
-    screen.blit(bg[bg_x][bg_y], (0, 0))
-    platforms = eval(f'platforms_{bg_x + 1}_{bg_y + 1}')
-    # platforms.draw(screen)
-    walls = eval(f'walls_{bg_x + 1}_{bg_y + 1}')
-    # walls.draw(screen)
-    ledges_right = eval(f'ledges_right_{bg_x + 1}_{bg_y + 1}')
-    # ledges_right.draw(screen)
-    ledges_left = eval(f'ledges_left_{bg_x + 1}_{bg_y + 1}')
-    # ledges_left.draw(screen)
-    screen.blit(hp_icon, (25, 5))
-    for i in range(hp):
-        screen.blit(heart_icon, (41 + i * 16, 5))
+    while scene:
+        screen.blit(eval(f'bg_scene_{scene_count}'), (0, 0))
+        screen.blit(continue_label, continue_label_rect)
+        scene_label = label_2.render(eval(f'scene_{scene_count}_text')[scene_line][:scene_label_count], False, (209, 151, 27))
+        if scene_label_count == len(eval(f'scene_{scene_count}_text')[scene_line]):
+            scene_label_count = 1
+            scene_line += 1
+            # scene_y += 30
 
-    if gameplay:
+        key_sound.play()
+        screen.blit(scene_label, (50, scene_y))
+        scene_label_count += 1
+
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        if scene_line == len(eval(f'scene_{scene_count}_text')):
+            scene = False
+            gameplay = True
+            running = True
+            clock.tick(0.5)
+            scene_label_count = 1
+            scene_line = 0
+            # scene_y = 20
+
+        mouse = pygame.mouse.get_pos()
+        if continue_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
+            scene = False
+            gameplay = True
+            scene_label_count = 1
+            scene_line = 0
+            # scene_y = 20
+
+        clock.tick(15)
+
+
+    if gameplay and not scene:
+        screen.blit(bg[bg_x][bg_y], (0, 0))
+        platforms = eval(f'platforms_{bg_x + 1}_{bg_y + 1}')
+        # platforms.draw(screen)
+        walls = eval(f'walls_{bg_x + 1}_{bg_y + 1}')
+        # walls.draw(screen)
+        ledges_right = eval(f'ledges_right_{bg_x + 1}_{bg_y + 1}')
+        # ledges_right.draw(screen)
+        ledges_left = eval(f'ledges_left_{bg_x + 1}_{bg_y + 1}')
+        # ledges_left.draw(screen)
+        screen.blit(hp_icon, (25, 5))
+        for i in range(hp):
+            screen.blit(heart_icon, (41 + i * 16, 5))
+
+
         player_rect = player.get_rect(topleft=(player_x, player_y))
         ghost_rect = ghost[0].get_rect(topleft=(screen_width, player_y))
-        screen.blit(hp_icon, (5, 5))
         # if ghost_list_in_game:
         #     for (i, el) in enumerate(ghost_list_in_game):
         #         screen.blit(ghost[ghost_anim_count], el)
@@ -217,54 +218,6 @@ while running:
             elif wound_anim_timer == 3:
                 wound_anim_count += 1
                 wound_anim_timer = 0
-
-        elif keys[pygame.K_LEFT] and not is_busy and not is_sit and not is_armed:
-            screen.blit(walk_left[walk_anim_count], (player_x, player_y))
-            right_orient = False
-            player_x -= walk_speed
-            walk_anim_timer += 1
-            if walk_anim_count == 11 and walk_anim_timer == 3:
-                walk_anim_count = 0
-                walk_anim_timer = 0
-            elif walk_anim_timer == 3:
-                walk_anim_count += 1
-                walk_anim_timer = 0
-
-        elif keys[pygame.K_LEFT] and not is_busy and not is_sit and is_armed:
-            screen.blit(walk_armed_left[walk_armed_anim_count], (player_x, player_y))
-            right_orient = False
-            player_x -= walk_armed_speed
-            walk_armed_anim_timer += 1
-            if walk_armed_anim_count == 14 and walk_armed_anim_timer == 2:
-                walk_armed_anim_count = 0
-                walk_armed_anim_timer = 0
-            elif walk_armed_anim_timer == 2:
-                walk_armed_anim_count += 1
-                walk_armed_anim_timer = 0
-
-        elif keys[pygame.K_RIGHT] and not is_busy and not is_sit and not is_armed:
-            screen.blit(walk_right[walk_anim_count], (player_x, player_y))
-            right_orient = True
-            player_x += walk_speed
-            walk_anim_timer += 1
-            if walk_anim_count == 11 and walk_anim_timer == 3:
-                walk_anim_count = 0
-                walk_anim_timer = 0
-            elif walk_anim_timer == 3:
-                walk_anim_count += 1
-                walk_anim_timer = 0
-
-        elif keys[pygame.K_RIGHT] and not is_busy and not is_sit and is_armed:
-            screen.blit(walk_armed_right[walk_armed_anim_count], (player_x, player_y))
-            right_orient = True
-            player_x += walk_armed_speed
-            walk_armed_anim_timer += 1
-            if walk_armed_anim_count == 14 and walk_armed_anim_timer == 2:
-                walk_armed_anim_count = 0
-                walk_armed_anim_timer = 0
-            elif walk_armed_anim_timer == 2:
-                walk_armed_anim_count += 1
-                walk_armed_anim_timer = 0
 
         elif is_climb:
             if climb_anim_count == 0:
@@ -434,6 +387,8 @@ while running:
 
         elif is_armed and is_shoot:
             is_busy = True
+            if shoot_anim_count == 2:
+                blaster_sound.play()
             if right_orient:
                 screen.blit(shoot_right[shoot_anim_count], (player_x + 12, player_y))
             if not right_orient:
@@ -492,13 +447,60 @@ while running:
                 player = player_stay_left
 
         elif keys[pygame.K_b] and is_armed and not is_shoot and not is_busy:
-            blaster_sound.play()
             if right_orient:
                 bullets_right.append(bullet.get_rect(topleft=(player_x + 30, player_y + 15)))
             else:
                 bullets_left.append(bullet.get_rect(topleft=(player_x, player_y + 15)))
             is_shoot = True
             is_busy = True
+
+        elif keys[pygame.K_LEFT] and not is_busy and not is_sit and not is_armed:
+            screen.blit(walk_left[walk_anim_count], (player_x, player_y))
+            right_orient = False
+            player_x -= walk_speed
+            walk_anim_timer += 1
+            if walk_anim_count == 11 and walk_anim_timer == 3:
+                walk_anim_count = 0
+                walk_anim_timer = 0
+            elif walk_anim_timer == 3:
+                walk_anim_count += 1
+                walk_anim_timer = 0
+
+        elif keys[pygame.K_LEFT] and not is_busy and not is_sit and is_armed:
+            screen.blit(walk_armed_left[walk_armed_anim_count], (player_x, player_y))
+            right_orient = False
+            player_x -= walk_armed_speed
+            walk_armed_anim_timer += 1
+            if walk_armed_anim_count == 14 and walk_armed_anim_timer == 2:
+                walk_armed_anim_count = 0
+                walk_armed_anim_timer = 0
+            elif walk_armed_anim_timer == 2:
+                walk_armed_anim_count += 1
+                walk_armed_anim_timer = 0
+
+        elif keys[pygame.K_RIGHT] and not is_busy and not is_sit and not is_armed:
+            screen.blit(walk_right[walk_anim_count], (player_x, player_y))
+            right_orient = True
+            player_x += walk_speed
+            walk_anim_timer += 1
+            if walk_anim_count == 11 and walk_anim_timer == 3:
+                walk_anim_count = 0
+                walk_anim_timer = 0
+            elif walk_anim_timer == 3:
+                walk_anim_count += 1
+                walk_anim_timer = 0
+
+        elif keys[pygame.K_RIGHT] and not is_busy and not is_sit and is_armed:
+            screen.blit(walk_armed_right[walk_armed_anim_count], (player_x, player_y))
+            right_orient = True
+            player_x += walk_armed_speed
+            walk_armed_anim_timer += 1
+            if walk_armed_anim_count == 14 and walk_armed_anim_timer == 2:
+                walk_armed_anim_count = 0
+                walk_armed_anim_timer = 0
+            elif walk_armed_anim_timer == 2:
+                walk_armed_anim_count += 1
+                walk_armed_anim_timer = 0
 
         else:
             screen.blit(player, (player_x, player_y))
@@ -517,12 +519,14 @@ while running:
         if not right_orient and is_sit:
             player = player_sit_left
 
-        if player_x > screen_width:
+        if player_x > screen_width-1:
             bg_x += 1
-            player_x = 0
+            player_x = 10
+            scene = True
+            scene_count += 1
         if player_x < 0:
             bg_x -= 1
-            player_x = screen_width
+            player_x = screen_width - 10
         if player_y > screen_height:
             bg_y += 1
             player_y = player_y - screen_height
