@@ -67,6 +67,7 @@ ledges_left_1_2 = pygame.sprite.Group()
 ledges_right_1_2 = pygame.sprite.Group()
 ledges_left_1_2.add(Platform(210, 220, 30, 20, 'green'))
 ledges_right_1_2.add(Platform(270, 100, 30, 20, 'green'))
+ledges_left_1_2.add(Platform(90, -20, 30, 20, 'green'))
 
 ledges_left_2_1 = pygame.sprite.Group()
 ledges_right_2_1 = pygame.sprite.Group()

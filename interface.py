@@ -15,6 +15,18 @@ continue_label_rect = continue_label.get_rect(topleft=(250, 250))
 start_label = [label.render("Start game", False, (150 + i * 20, 151, 27)) for i in range(5)]
 start_label_count = 0
 
+controls_label = label.render("Controls", False, (209, 151, 27))
+back_start_menu_label = label.render("Back start menu", False, (209, 151, 27))
+
+controls_text = ['CONTROLS:',
+                 'space - get/put away a weapon',
+                 'B - shoot',
+                 'N - jump',
+                 'left, right - walk',
+                 'up - climb up',
+                 'down - sit down, climb down']
+
+
 scene_count = 1
 scene_1_text = ['Главный герой игры, Алекс, молодой ученый, работающий ',
                'над экспериментом в области телепортации на секретной',

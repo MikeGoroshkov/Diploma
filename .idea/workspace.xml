@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2174de1b-0683-4c71-a0fe-dfda69071a1c" name="Changes" comment="recovery after loss">
-      <change afterPath="$PROJECT_DIR$/.idea/Diplom.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/enemies.py" beforeDir="false" afterPath="$PROJECT_DIR$/enemies.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hero.py" beforeDir="false" afterPath="$PROJECT_DIR$/hero.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/flash_new.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/flash_new.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/interface.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/levels.py" beforeDir="false" afterPath="$PROJECT_DIR$/levels.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
@@ -35,18 +36,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/MC/PycharmProjects/Diplom&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/MC/PycharmProjects/Diplom/sounds",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\MC\PycharmProjects\Diplom\sounds" />
+      <recent name="C:\Users\MC\PycharmProjects\Diplom\images" />
       <recent name="C:\Users\MC\PycharmProjects\Diploma\sounds" />
       <recent name="C:\Users\MC\PycharmProjects\Diploma\images" />
       <recent name="C:\Users\MC\PycharmProjects\Diploma\fonts" />
