@@ -18,21 +18,35 @@ arrows_right = []
 arrows_left = []
 
 class Archer(pygame.sprite.Sprite):
-    def __init__(self, x, y, bg_x, bg_y):
+    def __init__(self, x, y, bg_x, bg_y, lev):
         super().__init__()
+        self.lev = lev
         self.x = x
         self.y = y
         self.bg_x = bg_x
         self.bg_y = bg_y
+        self.damage = 30 * self.lev
+        self.hp_max = 100 * self.lev
+        self.hp = 100 * self.lev
+        self.exp = 30 * self.lev
         self.archer_stay_right = archer_sheet.subsurface(pygame.Rect((3,4), (57, 78)))
         self.archer_stay_left = pygame.transform.flip(archer_sheet.subsurface(pygame.Rect((3,4), (57, 78))), True, False)
+    def set_hp(self, player_damage):
+        self.hp -= player_damage
+        if self.hp < 0:
+            self.hp = 0
+        if self.hp > self.hp_max:
+            self.hp = self.hp_max
 
 
-archer_1 = Archer(550, 22, 0, 0)
-archer_2 = Archer(550, 142, 1, 0)
-archer_3 = Archer(550, 262, 0, 1)
+enemy_hp_line_icon = pygame.image.load('images/enemy_hp_line.png')
+
+archer_1 = Archer(550, 22, 0, 0, 1)
+archer_2 = Archer(550, 262, 1, 0, 1)
+archer_3 = Archer(500, 262, 0, 1, 2)
 archers_full_list = [archer_1, archer_2, archer_3]
-archers_list_in_game = [archer_1]
+archers_list_in_game = []
+
 
 archer_shoot_anim_count = 0
 archer_shoot_anim_timer = 0

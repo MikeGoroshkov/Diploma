@@ -18,8 +18,17 @@ bullets_left = []
 walk_speed = 3
 walk_armed_speed = 2
 player_x = 200
-player_y = 22
-hp = 3
+player_y = 22 + 240
+hp = 100
+hp_max = 100
+player_damage = 25
+experience = 0
+level = 1
+
+hp_line_icon = pygame.image.load('images/hp_line.png')
+hp_icon = pygame.image.load('images/hp.png')
+exp_icon = pygame.image.load('images/exp.png')
+exp_line_icon = pygame.image.load('images/exp_line.png')
 
 player_anim_count = 0
 player_anim_timer = 0

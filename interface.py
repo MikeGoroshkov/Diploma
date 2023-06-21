@@ -3,6 +3,7 @@ import pygame
 label_0 = pygame.font.Font('fonts/Pangolin-Regular.ttf', 50)
 label = pygame.font.Font('fonts/Pangolin-Regular.ttf', 30)
 label_2 = pygame.font.Font('fonts/Pangolin-Regular.ttf', 20)
+label_3 = pygame.font.Font('fonts/Pangolin-Regular.ttf', 16)
 
 name_label = label_0.render("Escape from Zefira", False, (209, 151, 27))
 lose_label = label.render("You lose!", False, (219, 24, 24))
@@ -22,6 +23,8 @@ controls_text = ['CONTROLS:',
                  'space - get/put away a weapon',
                  'B - shoot',
                  'N - jump',
+                 'V - use item',
+                 '< - switch item',
                  'left, right - walk',
                  'up - climb up',
                  'down - sit down, climb down']
@@ -45,6 +48,3 @@ bg_scene_2 = pygame.image.load('images/bg_scene_2.png').convert_alpha()
 scene_label_count = 1
 scene_line = 0
 scene_y = 20
-
-heart_icon = pygame.image.load('images/heart.png').convert_alpha()
-hp_icon = pygame.image.load('images/hp.png').convert_alpha()

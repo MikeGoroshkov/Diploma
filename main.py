@@ -3,17 +3,12 @@ from hero import *
 from levels import *
 from enemies import *
 from interface import *
+from inventory import *
+from sounds import *
 
 # image_path = '/data/data/org.petuhondriy.myapp/files/app/'
 
 clock = pygame.time.Clock()
-
-# pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
-intro_sound = pygame.mixer.Sound('sounds/Overrated.mp3')
-bg_sound = pygame.mixer.Sound('sounds/Loops_Of_Fury.mp3')
-blaster_sound = pygame.mixer.Sound('sounds/laser-blast.mp3')
-key_sound = pygame.mixer.Sound('sounds/key.mp3')
-arrow_sound = pygame.mixer.Sound('sounds/arrow.mp3')
 
 gameplay = False
 running = False
@@ -110,9 +105,14 @@ while running:
 
 
     if gameplay and not scene:
-        if hp == 0:
+        if hp <= 0:
             gameplay = False
-        screen.blit(bg[bg_x][bg_y], (0, 0))
+        if experience >= (level**2) * 100:
+            experience -= (level**2) * 100
+            level += 1
+            player_damage *= 1.2
+
+        screen.blit(bg[bg_y][bg_x], (0, 0))
         platforms = eval(f'platforms_{bg_x + 1}_{bg_y + 1}')
         # platforms.draw(screen)
         walls = eval(f'walls_{bg_x + 1}_{bg_y + 1}')
@@ -121,9 +121,19 @@ while running:
         # ledges_right.draw(screen)
         ledges_left = eval(f'ledges_left_{bg_x + 1}_{bg_y + 1}')
         # ledges_left.draw(screen)
+        doors = eval(f'doors_{bg_x + 1}_{bg_y + 1}')
+        doors.draw(screen)
         screen.blit(hp_icon, (25, 5))
-        for i in range(hp):
-            screen.blit(heart_icon, (41 + i * 16, 5))
+        for i in range(hp//10):
+            screen.blit(hp_line_icon, (45 + i * 5, 5))
+        level_label = label_3.render(f"Level: {level}", False, (175, 50, 50))
+        screen.blit(level_label, (200, 5))
+        screen.blit(exp_line_icon, (270, 9))
+        for i in range(int((experience/((level**2) * 100))*10)):
+            screen.blit(exp_icon, (270 + i * 10, 9))
+        for i, item in enumerate(inventory_list):
+            screen.blit(item.image, (590 - i * 20, 5))
+        screen.blit(border, (border_x, border_y))
 
         player_rect = player.get_rect(topleft=(player_x, player_y))
         ghost_rect = ghost[0].get_rect(topleft=(screen_width, player_y))
@@ -147,7 +157,7 @@ while running:
             if player_rect.colliderect(platform.rect) and not is_jump_up and not is_jump_down:
                 if falling_high > 8:
                     is_getup = True
-                    hp -= 1
+                    hp -= 25
                     falling_high = 0
                 if is_fall:
                     if right_orient:
@@ -174,6 +184,9 @@ while running:
                 else:
                     player_x += 15
 
+        for door in doors:
+            screen.blit(tile_door, (door.rect.x, door.rect.y))
+
         for ledge in ledges_right:
             for i in range(ledge.width // 30):
                 screen.blit(tile_3, (ledge.rect.x + i * 30, ledge.rect.y))
@@ -181,7 +194,16 @@ while running:
             for i in range(ledge.width // 30):
                 screen.blit(tile_3, (ledge.rect.x + i * 30, ledge.rect.y))
 
+        for i, item in enumerate(items_list):
+            if item.bg_x == bg_x and item.bg_y == bg_y:
+                screen.blit(item.image, (item.x, item.y))
+            if item.rect.colliderect(player_rect) and is_sit:
+                inventory_list.append(item)
+                items_list.pop(i)
+
         for archer in archers_list_in_game:
+            for i in range(int(archer.hp/archer.hp_max*10)):
+                screen.blit(enemy_hp_line_icon, (archer.x + 15 + i * 5, archer.y - 10))
             if archer.y - player_y < 50 and archer.y - player_y > -50:
                 screen.blit(archer_shoot_left[archer_shoot_anim_count], (archer.x-48, archer.y-28))
                 archer_shoot_anim_timer += 1
@@ -381,6 +403,7 @@ while running:
                 jump_anim_count = 0
                 jump_anim_timer = 0
                 is_jump = False
+                is_busy = False
             elif jump_anim_timer == 2:
                 jump_anim_count += 1
                 jump_anim_timer = 0
@@ -545,11 +568,14 @@ while running:
         elif keys[pygame.K_UP] and not is_jump_up and not is_busy:
             if not is_sit and not is_armed:
                 is_jump_up = True
+                is_busy = True
             if is_sit:
                 is_sit_up = True
                 player_y -= 28
                 is_sit = False
-            is_busy = True
+                is_busy = True
+            else:
+                screen.blit(player, (player_x, player_y))
 
         elif keys[pygame.K_DOWN] and not is_busy:
             if not is_armed:
@@ -566,6 +592,8 @@ while running:
             if not is_climb_down and not is_sit:
                 is_sit_down = True
                 is_busy = True
+            else:
+                screen.blit(player, (player_x, player_y))
 
         elif keys[pygame.K_n] and not is_busy and not is_sit and not is_armed:
             is_busy = True
@@ -600,7 +628,7 @@ while running:
                     player = player_sit_left
 
 
-        elif keys[pygame.K_b] and is_armed and not is_shoot and not is_busy:
+        elif keys[pygame.K_b] and is_armed and not is_busy:
             if is_sit:
                 if right_orient:
                     bullets_right.append(bullet.get_rect(topleft=(player_x + 30, player_y + 6)))
@@ -681,6 +709,47 @@ while running:
         else:
             screen.blit(player, (player_x, player_y))
 
+        if keys[pygame.K_COMMA] and not is_delay:
+            is_delay = True
+            if len(inventory_list) > 1:
+                if border_x == 588 - (len(inventory_list)-1) * 20:
+                    border_x = 588
+                    border_pos = 0
+                else:
+                    border_x -= 20
+                    border_pos += 1
+
+        if keys[pygame.K_v] and not is_delay:
+            is_delay = True
+            for i, item in enumerate(inventory_list):
+                if border_pos == i:
+                    if item.name == 'drug':
+                        hp += 50
+                        if hp > hp_max:
+                            hp = hp_max
+                        sip_sound.play()
+                        if border_x == 588 - (len(inventory_list)-1) * 20 and (len(inventory_list) > 1):
+                            border_x += 20
+                            border_pos -= 1
+                        inventory_list.pop(i)
+                    else:
+                        if item.name == 'key':
+                            for door in doors:
+                                if player_rect.colliderect(door.rect):
+                                    bg_x += 1
+                                    key_card_sound.play()
+                                    player_x = 30
+                                    if border_x == 588 - (len(inventory_list) - 1) * 20 and (len(inventory_list) > 1):
+                                        border_x += 20
+                                        border_pos -= 1
+                                    inventory_list.pop(i)
+
+        if is_delay:
+            delay_timer += 1
+            if delay_timer == 10:
+                is_delay = False
+                delay_timer = 0
+
         if right_orient and is_sit and ((is_arm and not is_armed) or is_armed):
             player = player_sit_armed_right
         if not right_orient and is_sit and ((is_arm and not is_armed) or is_armed):
@@ -698,45 +767,74 @@ while running:
         if not right_orient and is_sit and not is_arm and not is_armed:
             player = player_sit_left
 
-
         if player_x > screen_width-1:
             bg_x += 1
             player_x = 10
-            scene = True
-            scene_count += 1
+            if bg_x == 2:
+                scene = True
+                scene_count += 1
             for i, archer in enumerate(archers_list_in_game):
                 if archer.bg_x == bg_x - 1 and archer.bg_y == bg_y:
+                    archer.set_hp(-1000)
                     archers_list_in_game.pop(i)
             for archer in archers_full_list:
                 if archer.bg_x == bg_x and archer.bg_y == bg_y:
-                    archers_list_in_game.append(archer)
-        if player_x < 0:
+                    if archer not in archers_list_in_game:
+                        archers_list_in_game.append(archer)
+            arrows_right.clear()
+            arrows_left.clear()
+            bullets_right.clear()
+            bullets_left.clear()
+
+        if player_x < 0 and bg_x != 0:
             bg_x -= 1
             player_x = screen_width - 10
+            if bg_x == 1:
+                scene_count -= 1
             for i, archer in enumerate(archers_list_in_game):
                 if archer.bg_x == bg_x + 1 and archer.bg_y == bg_y:
+                    archer.set_hp(-1000)
                     archers_list_in_game.pop(i)
             for archer in archers_full_list:
                 if archer.bg_x == bg_x and archer.bg_y == bg_y:
-                    archers_list_in_game.append(archer)
+                    if archer not in archers_list_in_game:
+                        archers_list_in_game.append(archer)
+            arrows_right.clear()
+            arrows_left.clear()
+            bullets_right.clear()
+            bullets_left.clear()
+
         if player_y > screen_height:
             bg_y += 1
             player_y = player_y - screen_height
             for i, archer in enumerate(archers_list_in_game):
                 if archer.bg_x == bg_x and archer.bg_y == bg_y - 1:
+                    archer.set_hp(-1000)
                     archers_list_in_game.pop(i)
             for archer in archers_full_list:
                 if archer.bg_x == bg_x and archer.bg_y == bg_y:
-                    archers_list_in_game.append(archer)
+                    if archer not in archers_list_in_game:
+                        archers_list_in_game.append(archer)
+            arrows_right.clear()
+            arrows_left.clear()
+            bullets_right.clear()
+            bullets_left.clear()
+
         if player_y < 0 and bg_y != 0:
             bg_y -= 1
             player_y = player_y + screen_height
             for i, archer in enumerate(archers_list_in_game):
                 if archer.bg_x == bg_x and archer.bg_y == bg_y + 1:
+                    archer.set_hp(-1000)
                     archers_list_in_game.pop(i)
             for archer in archers_full_list:
                 if archer.bg_x == bg_x and archer.bg_y == bg_y:
-                    archers_list_in_game.append(archer)
+                    if archer not in archers_list_in_game:
+                        archers_list_in_game.append(archer)
+            arrows_right.clear()
+            arrows_left.clear()
+            bullets_right.clear()
+            bullets_left.clear()
 
         ghost_anim_timer += 1
         if ghost_anim_count == 0 and ghost_anim_timer == 10:
@@ -751,11 +849,17 @@ while running:
                 screen.blit(bullet, (el.x, el.y))
                 el.x += 15
 
+                for wall in walls:
+                    if el.colliderect(wall.rect):
+                        try:
+                            bullets_right.pop(i)
+                        except:
+                            pass
                 if el.x < 0 or el.x > screen_width:
                     try:
                         bullets_right.pop(i)
                     except:
-                        print("no bullets!")
+                        pass
 
                 if ghost_list_in_game:
                     for (index, ghost_el) in enumerate(ghost_list_in_game):
@@ -768,7 +872,11 @@ while running:
                 if archers_list_in_game:
                     for (index, archer_el) in enumerate(archers_list_in_game):
                         if el.colliderect(archer_el.archer_stay_left.get_rect(topleft=(archer_el.x, archer_el.y))):
-                            archers_list_in_game.pop(index)
+                            archer_el.set_hp(player_damage)
+                            if archer_el.hp <= 0:
+                                archer_el.set_hp(-1000)
+                                experience += archer_el.exp
+                                archers_list_in_game.pop(index)
                             try:
                                 bullets_right.pop(i)
                             except:
@@ -779,14 +887,20 @@ while running:
                 screen.blit(arrow, (el.x, el.y))
                 el.x += 15
 
+                for wall in walls:
+                    if el.colliderect(wall.rect):
+                        try:
+                            arrows_right.pop(i)
+                        except:
+                            pass
                 if el.x < 0 or el.x > screen_width:
                     try:
                         arrows_right.pop(i)
                     except:
-                        print("ops!")
+                        pass
 
                 if el.colliderect(player_rect):
-                    hp -= 1
+                    hp -= archer_1.damage
                     try:
                         arrows_right.pop(i)
                     except:
@@ -796,11 +910,18 @@ while running:
             for (i, el) in enumerate(bullets_left):
                 screen.blit(bullet, (el.x, el.y))
                 el.x -= 15
+
+                for wall in walls:
+                    if el.colliderect(wall.rect):
+                        try:
+                            bullets_left.pop(i)
+                        except:
+                            pass
                 if el.x < 0 or el.x > screen_width:
                     try:
                         bullets_left.pop(i)
                     except:
-                        print("no bullets!")
+                        pass
 
                 if ghost_list_in_game:
                     for (index, ghost_el) in enumerate(ghost_list_in_game):
@@ -814,7 +935,11 @@ while running:
                 if archers_list_in_game:
                     for (index, archer_el) in enumerate(archers_list_in_game):
                         if el.colliderect(archer_el.archer_stay_left.get_rect(topleft=(archer_el.x, archer_el.y))):
-                            archers_list_in_game.pop(index)
+                            archer_el.set_hp(player_damage)
+                            if archer_el.hp <= 0:
+                                archer_el.set_hp(-1000)
+                                experience += archer_el.exp
+                                archers_list_in_game.pop(index)
                             try:
                                 bullets_left.pop(i)
                             except:
@@ -825,6 +950,12 @@ while running:
                 screen.blit(arrow, (el.x, el.y))
                 el.x -= 15
 
+                for wall in walls:
+                    if el.colliderect(wall.rect):
+                        try:
+                            arrows_left.pop(i)
+                        except:
+                            pass
                 if el.x < 0 or el.x > screen_width:
                     try:
                         arrows_left.pop(i)
@@ -832,7 +963,7 @@ while running:
                         print("ops!")
 
                 if el.colliderect(player_rect):
-                    hp -= 1
+                    hp -= archer_1.damage
                     try:
                         arrows_left.pop(i)
                     except:
@@ -850,13 +981,15 @@ while running:
             player_y = 22
             bg_x = 0
             bg_y = 0
-            hp = 3
+            hp = 100
             ghost_list_in_game.clear()
-            archers_list_in_game = [archer]
+            archers_list_in_game = [archer_1]
             bullets_right.clear()
             bullets_left.clear()
             arrows_right.clear()
             arrows_left.clear()
+            inventory_list = [drug_1]
+            items_list = items_list_start
 
     pygame.display.update()
 
