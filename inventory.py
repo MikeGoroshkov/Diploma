@@ -23,10 +23,12 @@ delay_timer = 0
 drug = pygame.image.load('images/drug.png').convert_alpha()
 key = pygame.image.load('images/card-key.png').convert_alpha()
 
-drug_1 = Item('drug', drug, 50, 204, 0, 0)
+drug_1 = Item('drug', drug, 150, 84, 0, 0)
+drug_2 = Item('drug', drug, 430, 204, 2, 0)
 key_1 = Item('key', key, 590, 84, 1, 0)
+key_2 = Item('key', key, 570, 204, 3, 0)
 
-items_list_start = [drug_1, key_1]
-items_list = items_list_start
-inventory_list = [drug_1, key_1]
+items_list_start = [drug_1, key_1, drug_2, key_2]
+items_list = items_list_start[:]
+inventory_list = []
 

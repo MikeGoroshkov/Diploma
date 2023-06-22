@@ -31,7 +31,7 @@ class Archer(pygame.sprite.Sprite):
         self.exp = 30 * self.lev
         self.archer_stay_right = archer_sheet.subsurface(pygame.Rect((3,4), (57, 78)))
         self.archer_stay_left = pygame.transform.flip(archer_sheet.subsurface(pygame.Rect((3,4), (57, 78))), True, False)
-    def set_hp(self, player_damage):
+    def decrease_hp(self, player_damage):
         self.hp -= player_damage
         if self.hp < 0:
             self.hp = 0
@@ -45,8 +45,7 @@ archer_1 = Archer(550, 22, 0, 0, 1)
 archer_2 = Archer(550, 262, 1, 0, 1)
 archer_3 = Archer(500, 262, 0, 1, 2)
 archers_full_list = [archer_1, archer_2, archer_3]
-archers_list_in_game = []
-
+archers_list_in_game = [archer_1]
 
 archer_shoot_anim_count = 0
 archer_shoot_anim_timer = 0

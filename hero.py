@@ -17,8 +17,8 @@ bullets_left = []
 
 walk_speed = 3
 walk_armed_speed = 2
-player_x = 200
-player_y = 22 + 240
+player_x = 50
+player_y = 142
 hp = 100
 hp_max = 100
 player_damage = 25
