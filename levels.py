@@ -19,7 +19,7 @@ bg_6 = pygame.image.load(f'images/back_6.png').convert_alpha()
 bg_7 = pygame.image.load(f'images/back_7.png').convert_alpha()
 bg_8 = pygame.image.load(f'images/back_8.png').convert_alpha()
 bg = [[bg_1, bg_2, bg_3, bg_4, bg_5, bg_6, bg_7, bg_8], [bg_1, bg_2, bg_3, bg_4, bg_5, bg_6, bg_7, bg_8]]
-bg_x = 3
+bg_x = 0
 bg_y = 0
 
 class Platform(pygame.sprite.Sprite):
@@ -38,6 +38,7 @@ tile_1 = pygame.image.load('images/tile_0000.png').convert_alpha()
 tile_2 = pygame.image.load('images/tile_0018.png').convert_alpha()
 tile_3 = pygame.image.load('images/tile_0001.png').convert_alpha()
 tile_door = pygame.image.load('images/door.png').convert_alpha()
+
 platforms = [[pygame.sprite.Group() for j in range(2)] for i in range(8)]
 
 platforms[0][0].add(Platform(120, 340, 510, 20, 'red'))
@@ -80,14 +81,46 @@ platforms[3][1].add(Platform(330, 100, 300, 20, 'red'))
 platforms[3][1].add(Platform(210, 220, 150, 20, 'red'))
 platforms[3][1].add(Platform(510, 220, 120, 20, 'red'))
 
-platforms[4][0].add(Platform(0, 340, 630, 20, 'red'))
+platforms[4][0].add(Platform(120, 340, 510, 20, 'red'))
+platforms[4][0].add(Platform(0, 100, 630, 20, 'red'))
+
 platforms[4][1].add(Platform(0, 340, 630, 20, 'red'))
+platforms[4][1].add(Platform(0, 220, 210, 20, 'red'))
+platforms[4][1].add(Platform(480, 220, 150, 20, 'red'))
+platforms[4][1].add(Platform(0, 100, 270, 20, 'red'))
+platforms[4][1].add(Platform(390, 100, 240, 20, 'red'))
+
 platforms[5][0].add(Platform(0, 340, 630, 20, 'red'))
+platforms[5][0].add(Platform(120, 220, 420, 20, 'red'))
+platforms[5][0].add(Platform(0, 100, 150, 20, 'red'))
+platforms[5][0].add(Platform(330, 100, 150, 20, 'red'))
+
 platforms[5][1].add(Platform(0, 340, 630, 20, 'red'))
-platforms[6][0].add(Platform(0, 340, 630, 20, 'red'))
+platforms[5][1].add(Platform(0, 220, 210, 20, 'red'))
+platforms[5][1].add(Platform(480, 220, 150, 20, 'red'))
+platforms[5][1].add(Platform(0, 100, 510, 20, 'red'))
+
+platforms[6][0].add(Platform(120, 340, 510, 20, 'red'))
+platforms[6][0].add(Platform(0, 220, 210, 20, 'red'))
+platforms[6][0].add(Platform(300, 220, 150, 20, 'red'))
+platforms[6][0].add(Platform(150, 100, 180, 20, 'red'))
+platforms[6][0].add(Platform(510, 100, 120, 20, 'red'))
+
 platforms[6][1].add(Platform(0, 340, 630, 20, 'red'))
-platforms[7][0].add(Platform(0, 340, 630, 20, 'red'))
+platforms[6][1].add(Platform(0, 220, 240, 20, 'red'))
+platforms[6][1].add(Platform(330, 220, 300, 20, 'red'))
+platforms[6][1].add(Platform(0, 100, 180, 20, 'red'))
+platforms[6][1].add(Platform(450, 100, 180, 20, 'red'))
+
+platforms[7][0].add(Platform(0, 340, 240, 20, 'red'))
+platforms[7][0].add(Platform(360, 340, 270, 20, 'red'))
+platforms[7][0].add(Platform(330, 220, 180, 20, 'red'))
+platforms[7][0].add(Platform(0, 100, 360, 20, 'red'))
+
 platforms[7][1].add(Platform(0, 340, 630, 20, 'red'))
+platforms[7][1].add(Platform(0, 220, 240, 20, 'red'))
+platforms[7][1].add(Platform(0, 100, 90, 20, 'red'))
+platforms[7][1].add(Platform(210, 100, 180, 20, 'red'))
 
 walls = [[pygame.sprite.Group() for j in range(2)] for i in range(8)]
 
@@ -121,6 +154,32 @@ walls[3][1].add(Platform(-1, 120, 20, 240, 'blue'))
 walls[3][1].add(Platform(360, 120, 20, 120, 'blue'))
 walls[3][1].add(Platform(611, 0, 20, 360, 'blue'))
 
+walls[4][0].add(Platform(-1, 0, 20, 360, 'blue'))
+
+walls[4][1].add(Platform(-1, 0, 20, 360, 'blue'))
+walls[4][1].add(Platform(611, 120, 20, 120, 'blue'))
+
+walls[5][0].add(Platform(100, 120, 20, 120, 'blue'))
+walls[5][0].add(Platform(360, 120, 20, 120, 'blue'))
+walls[5][0].add(Platform(611, 0, 20, 360, 'blue'))
+
+walls[5][1].add(Platform(-1, 120, 20, 120, 'blue'))
+walls[5][1].add(Platform(611, 0, 20, 360, 'blue'))
+
+walls[6][0].add(Platform(-1, 0, 20, 360, 'blue'))
+walls[6][0].add(Platform(300, 120, 20, 240, 'blue'))
+
+walls[6][1].add(Platform(-1, 0, 20, 360, 'blue'))
+walls[6][1].add(Platform(310, 0, 20, 240, 'blue'))
+walls[6][1].add(Platform(611, 120, 20, 240, 'blue'))
+
+walls[7][0].add(Platform(310, 120, 20, 120, 'blue'))
+walls[7][0].add(Platform(611, 0, 20, 360, 'blue'))
+
+walls[7][1].add(Platform(-1, 120, 20, 240, 'blue'))
+walls[7][1].add(Platform(390, 0, 20, 120, 'blue'))
+walls[7][1].add(Platform(611, 0, 20, 360, 'blue'))
+
 ledges_right = [[pygame.sprite.Group() for j in range(2)] for i in range(8)]
 ledges_left = [[pygame.sprite.Group() for j in range(2)] for i in range(8)]
 for i in range(8):
@@ -144,4 +203,6 @@ doors = [[pygame.sprite.Group() for j in range(2)] for i in range(8)]
 
 doors[1][1].add(Platform(565, 240, 50, 100, 'green'))
 doors[3][1].add(Platform(565, 120, 50, 100, 'green'))
+doors[5][1].add(Platform(565, 240, 50, 100, 'green'))
+doors[7][1].add(Platform(400, 240, 50, 100, 'green'))
 
