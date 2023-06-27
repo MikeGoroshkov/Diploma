@@ -1,7 +1,6 @@
 ### Примеры промптов и результатов в Stable Diffusion 1.5
 
-scientist-near-the-detector-collider-flash-magenta-down-jacket-cartoon
-
+science-fiction-a-man-in-a-purple-jacket-with-a-blaster-on-the-background-of-the-city-of-the-future
 ![alt text](images/start_screen.png)
 
 aliens-physics-laboratory-background-for-sci-fi-game
