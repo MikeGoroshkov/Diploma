@@ -38,6 +38,7 @@ tile_1 = pygame.image.load('images/tile_0000.png').convert_alpha()
 tile_2 = pygame.image.load('images/tile_0018.png').convert_alpha()
 tile_3 = pygame.image.load('images/tile_0001.png').convert_alpha()
 tile_door = pygame.image.load('images/door.png').convert_alpha()
+spaceship = pygame.image.load('images/spaceship.png').convert_alpha()
 
 platforms = [[pygame.sprite.Group() for j in range(2)] for i in range(8)]
 
@@ -204,5 +205,5 @@ doors = [[pygame.sprite.Group() for j in range(2)] for i in range(8)]
 doors[1][1].add(Platform(565, 240, 50, 100, 'green'))
 doors[3][1].add(Platform(565, 120, 50, 100, 'green'))
 doors[5][1].add(Platform(565, 240, 50, 100, 'green'))
-doors[7][1].add(Platform(400, 240, 50, 100, 'green'))
+doors[7][1].add(Platform(450, 110, 125, 227, 'green'))
 

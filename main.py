@@ -75,7 +75,7 @@ while running:
             # scene_y += 30
 
         key_sound.play()
-        screen.blit(scene_label, (50, scene_y))
+        screen.blit(scene_label, (25, scene_y))
         scene_label_count += 1
 
         pygame.display.update()
@@ -169,7 +169,10 @@ while running:
                     player_x += 15
 
         for door in doors[bg_x][bg_y]:
-            screen.blit(tile_door, (door.rect.x, door.rect.y))
+            if bg_x == 7 and bg_y == 1:
+                screen.blit(spaceship, (door.rect.x, door.rect.y))
+            else:
+                screen.blit(tile_door, (door.rect.x, door.rect.y))
 
         for ledge in ledges_right[bg_x][bg_y]:
             for i in range(ledge.width // 30):
@@ -785,7 +788,7 @@ while running:
         else:
             screen.blit(player, (player_x, player_y))
 
-        if keys[pygame.K_COMMA] and not is_delay:
+        if keys[pygame.K_m] and not is_delay:
             is_delay = True
             if len(inventory_list) > 1:
                 if border_x == 588 - (len(inventory_list)-1) * 20:
