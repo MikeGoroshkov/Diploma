@@ -12,21 +12,13 @@ server.bind((host, port))
 server.listen()
 
 # Lists For Clients and Their Nicknames
-clients = []
-nicknames = []
 savings = []
-
 
 def send(client, saving):
     try:
         client.send(saving.encode('ascii'))
     except:
-        # Removing And Closing Clients
-        index = clients.index(client)
-        clients.remove(client)
-        client.close()
-        nickname = nicknames[index]
-        nicknames.remove(nickname)
+        print("Failed to send save")
 
 # Receiving / Listening Function
 def receive():
@@ -50,9 +42,6 @@ def receive():
             nickname = input_message.split(";")[0]
             print(f"Writed saving from {nickname}:{address}")
             print(savings)
-
-        nicknames.append(nickname)
-        clients.append(client)
 
 
 print("Server if listening...")
