@@ -12,11 +12,11 @@ server.bind((host, port))
 server.listen()
 
 # Lists For Clients and Their Nicknames
-savings = []
+saves = []
 
-def send(client, saving):
+def send(client, save):
     try:
-        client.send(saving.encode('ascii'))
+        client.send(save.encode('ascii'))
     except:
         print("Failed to send save")
 
@@ -28,20 +28,20 @@ def receive():
         print("Connected with {}".format(str(address)))
         input_message = client.recv(1024).decode('ascii')
         if input_message.split()[0] == 'request':
-            for saving in savings:
-                if saving.split(";")[0] == input_message.split()[1]:
-                    thread = threading.Thread(target=send, args=(client, saving))
+            for save in saves:
+                if save.split(";")[0] == input_message.split()[1]:
+                    thread = threading.Thread(target=send, args=(client, save))
                     thread.start()
                     nickname = input_message.split()[1]
-                    print(f"Sended saving to {nickname}:{address}")
+                    print(f"Sended save to {nickname}:{address}")
         else:
-            for i, saving in enumerate(savings):
-                if saving.split(";")[0] == input_message.split(";")[0]:
-                    savings.pop(i)
-            savings.append(input_message)
+            for i, save in enumerate(saves):
+                if save.split(";")[0] == input_message.split(";")[0]:
+                    saves.pop(i)
+            saves.append(input_message)
             nickname = input_message.split(";")[0]
-            print(f"Writed saving from {nickname}:{address}")
-            print(savings)
+            print(f"Writed save from {nickname}:{address}")
+            print(saves)
 
 
 print("Server if listening...")

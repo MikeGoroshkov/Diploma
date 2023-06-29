@@ -1,4 +1,4 @@
-# Система авто сохранения на удаленном сервере в игре
+# Система сохранения на удаленном сервере в игре
 
 import socket
 import threading
@@ -7,7 +7,7 @@ import time
 # Тестовые значения параметров
 nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y = 'player', 50, 142, 100, 100, 25, 0, 1, 0, 0
 
-def save_game(nickname = 'player', player_x = 50, player_y = 142, hp = 100, hp_max = 100, player_damage = 25, experience = 0, level = 1, bg_x = 0, bg_y = 0):
+def save_game(nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y):
     try:
         save_message = f'{nickname};{player_x};{player_y};{hp};{hp_max};{player_damage};{experience};{level};{bg_x};{bg_y}'
         return save_message
@@ -18,66 +18,67 @@ def load_game(load_message):
     global nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y
     try:
         nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y = tuple(load_message.split(";"))
-        print("Saving is loaded")
+        print("Saving applied")
     except:
         print("Failed to load game!")
 
 
-# Connecting To Server
-# client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# client.connect(('192.168.43.14', 55555))
-
-# Listening to Server and Sending Nickname
-def receive():
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(('192.168.43.14', 55555))
+def send_save():
+    start_time = time.time()
     while True:
-        try:
-            message = client.recv(1024).decode('ascii')
-            load_game(message)
-            print("Saving is loaded")
-            break
-        except:
-            client.close()
+        timer = time.time()
+        if timer - start_time < 10:
+            try:
+                client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                client.connect(('192.168.43.14', 55555))
+                save_message = save_game(nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y)
+                client.send(save_message.encode('ascii'))
+                print("Saving sent")
+                client.close()
+                break
+            except:
+                pass
+        else:
+            print("server not responding, save failed")
             break
 
-def send_saving():
+def request_save():
+    start_time = time.time()
     while True:
-        try:
-            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            client.connect(('192.168.43.14', 55555))
-            save_message = save_game(nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y)
-            client.send(save_message.encode('ascii'))
-            print("Saving is sended")
-        except:
+        timer = time.time()
+        if timer - start_time < 10:
+            try:
+                client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                client.connect(('192.168.43.14', 55555))
+                client.send(f'request {nickname}'.encode('ascii'))
+                print("Request sent")
+                break
+            except:
+                pass
+        else:
+            print("server not responding, load failed")
             break
-
-def request_saving():
-    global nickname
     while True:
-        try:
-            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            client.connect(('192.168.43.14', 55555))
-            client.send(f'request {nickname}'.encode('ascii'))
-            print("Request is sended")
-        except:
+        timer = time.time()
+        if timer - start_time < 10:
+            try:
+                message = client.recv(1024).decode('ascii')
+                print("Save loaded")
+                load_game(message)
+                client.close()
+                break
+            except:
+                pass
+        else:
+            print("server not responding, load failed")
             break
 
 
-send_saving_thread = threading.Thread(target=send_saving)
-send_saving_thread.start()
+send_save_thread = threading.Thread(target=send_save)
+send_save_thread.start()
+time.sleep(3)
 
-load_saving_thread = threading.Thread(target=request_saving)
-load_saving_thread.start()
+load_save_thread = threading.Thread(target=request_save)
+load_save_thread.start()
 
-receive_thread = threading.Thread(target=receive)
-receive_thread.start()
-
-# while True:
-#     try:
-#         load_saving_thread = threading.Thread(target=request_saving)
-#         load_saving_thread.start()
-#     except:
-#         pass
-#     time.sleep(10)
 
