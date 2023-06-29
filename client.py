@@ -12,14 +12,14 @@ def save_game(nickname = 'player', player_x = 50, player_y = 142, hp = 100, hp_m
         save_message = f'{nickname};{player_x};{player_y};{hp};{hp_max};{player_damage};{experience}{level};{player_x};{player_y};{bg_x};{bg_y}'
         return save_message
     except:
-        print("Failed to load gamed!")
+        print("Failed to load game!")
 
 def load_game(load_message):
     try:
         nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y = tuple(load_message.split(";"))
         return nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y
     except:
-        print("Failed to load gamed!")
+        print("Failed to load game!")
 
 
 # Connecting To Server
@@ -33,29 +33,27 @@ def receive():
         try:
             message = client.recv(1024).decode('ascii')
             nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y = load_game(message)
-
+            print("Saving is loaded")
         except:
-            print("An error occured!")
-            client.close()
-            break
+            pass
 
 def send_saving():
     while True:
         save_message = save_game(nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y)
         client.send(save_message.encode('ascii'))
+        time.sleep(10)
 
 def request_saving():
     global nickname
-    while True:
-        client.send(f'{"request"} {nickname}'.encode('ascii'))
+    client.send(f'request {nickname}'.encode('ascii'))
 
+
+send_saving_thread = threading.Thread(target=send_saving)
+send_saving_thread.start()
 
 receive_thread = threading.Thread(target=receive)
 receive_thread.start()
 
-while True:
-    send_saving_thread = threading.Thread(target=send_saving)
-    send_saving_thread.start()
-    time.sleep(30)
-
+load_saving_thread = threading.Thread(target=request_saving)
+load_saving_thread.start()
 

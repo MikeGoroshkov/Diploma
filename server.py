@@ -16,19 +16,17 @@ clients = []
 nicknames = []
 savings = []
 
-# Handling Messages From Clients
+
 def send(client, saving):
-    while True:
-        try:
-            client.send(saving.encode('ascii'))
-        except:
-            # Removing And Closing Clients
-            index = clients.index(client)
-            clients.remove(client)
-            client.close()
-            nickname = nicknames[index]
-            nicknames.remove(nickname)
-            break
+    try:
+        client.send(saving.encode('ascii'))
+    except:
+        # Removing And Closing Clients
+        index = clients.index(client)
+        clients.remove(client)
+        client.close()
+        nickname = nicknames[index]
+        nicknames.remove(nickname)
 
 # Receiving / Listening Function
 def receive():
@@ -45,9 +43,13 @@ def receive():
                     nickname = input_message.split()[1]
                     print(f"Sended saving to {nickname}:{address}")
         else:
+            for i, saving in enumerate(savings):
+                if saving.split(";")[0] == input_message.split(";")[0]:
+                    savings.pop(i)
             savings.append(input_message)
             nickname = input_message.split(";")[0]
             print(f"Writed saving from {nickname}:{address}")
+            print(savings)
 
         nicknames.append(nickname)
         clients.append(client)
