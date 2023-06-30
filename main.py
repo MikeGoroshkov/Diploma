@@ -5,6 +5,9 @@ from enemies import *
 from interface import *
 from inventory import *
 from sounds import *
+from client import *
+
+
 
 # image_path = '/data/data/org.petuhondriy.myapp/files/app/'
 
@@ -26,7 +29,9 @@ while intro:
         if start_label_count == 5:
             start_label_count = 0
         screen.blit(name_label, (120, 10))
-        controls_label_rect = controls_label.get_rect(topleft=(240, 140))
+        load_game_label_rect = load_game_label.get_rect(topleft=(240, 140))
+        controls_label_rect = controls_label.get_rect(topleft=(240, 190))
+        screen.blit(load_game_label, load_game_label_rect)
         screen.blit(controls_label, controls_label_rect)
         pygame.display.update()
 
@@ -39,6 +44,17 @@ while intro:
             intro = False
             running = True
             scene = True
+        if load_game_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
+            # load_save_thread = threading.Thread(target=request_save(nickname))
+            # load_save_thread.start()
+            try:
+                game_loaded, nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y, scene_count = request_save(nickname)
+                if game_loaded:
+                    intro = False
+                    running = True
+                    gameplay = True
+            except:
+                pass
         if controls_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
             controls_menu = True
 
@@ -112,9 +128,9 @@ while running:
         if experience >= (level**2) * 100:
             experience -= (level**2) * 100
             level += 1
-            player_damage *= 1.2
-            hp_max *= 1.1
-            hp *= 1.1
+            player_damage = int(player_damage*1.2)
+            hp_max = int(hp_max*1.1)
+            hp = int(hp*1.1)
 
         screen.blit(bg[bg_y][bg_x], (0, 0))
         # platforms = eval(f'platforms_{bg_x + 1}_{bg_y + 1}')
@@ -297,6 +313,53 @@ while running:
                 elif fly_died_anim_timer == 5:
                     fly_died_anim_count += 1
                     fly_died_anim_timer = 0
+
+        for index, alien in enumerate(aliens_list_in_game):
+            if alien.alive:
+                if alien_walk_anim_count < 3:
+                    alien.shock = True
+                else:
+                    alien.shock = False
+                if alien.alien_stay_left.get_rect(topleft=(alien.x, alien.y)).colliderect(player_rect) and alien.shock and not is_wounded and not is_somersault and not is_climb and not is_climb_down:
+                    is_wounded = True
+                    hp -= alien.damage
+                for i in range(int(alien.hp/alien.hp_max*10)):
+                    screen.blit(enemy_hp_line_icon, (alien.x + i * 5, alien.y + 5))
+                if alien.x_0 - alien.x > alien.width:
+                    alien.right =True
+                if alien.x_0 - alien.x < 0:
+                    alien.right = False
+                if alien.right:
+                    screen.blit(alien_walk_right[alien_walk_anim_count], (alien.x, alien.y))
+                    alien.x += 3
+                if not alien.right:
+                    screen.blit(alien_walk_left[alien_walk_anim_count], (alien.x, alien.y))
+                    alien.x -= 3
+                alien_walk_anim_timer += 1
+                if alien_walk_anim_count == 0:
+                    shock_sound.play()
+                if alien_walk_anim_count == 9 and alien_walk_anim_timer == 5:
+                    alien_walk_anim_timer = 0
+                    alien_walk_anim_count = 0
+                elif alien_walk_anim_timer == 5:
+                    alien_walk_anim_count += 1
+                    alien_walk_anim_timer = 0
+            else:
+                if alien.right:
+                    screen.blit(alien_died_right[alien_died_anim_count], (alien.x, alien.y))
+                if not alien.right:
+                    screen.blit(alien_died_left[alien_died_anim_count], (alien.x, alien.y))
+                alien_died_anim_timer += 1
+                if alien_died_anim_count == 4 and alien_died_anim_timer == 5:
+                    alien_died_anim_timer = 0
+                    alien_died_anim_count = 0
+                    alien.alive = True
+                    alien.x = alien.x_0
+                    alien.y = alien.y_0
+                    aliens_list_in_game.pop(index)
+                elif alien_died_anim_timer == 5:
+                    alien_died_anim_count += 1
+                    alien_died_anim_timer = 0
 
         if not on_platform and not is_jump_up and not is_jump_down and not is_jump:
             is_fall = True
@@ -788,6 +851,18 @@ while running:
         else:
             screen.blit(player, (player_x, player_y))
 
+        if keys[pygame.K_s] and not is_delay:
+            is_delay = True
+            send_save_thread = threading.Thread(target=send_save(nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y, scene_count))
+            send_save_thread.start()
+
+        if keys[pygame.K_l] and not is_delay:
+            is_delay = True
+            try:
+                game_loaded, nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y, scene_count = request_save(nickname)
+            except:
+                pass
+
         if keys[pygame.K_m] and not is_delay:
             is_delay = True
             if len(inventory_list) > 1:
@@ -839,6 +914,12 @@ while running:
                                             fly.x = fly.x_0
                                             fly.y = fly.y_0
                                             fly_list_in_game.pop(i)
+                                    for i, alien in enumerate(aliens_list_in_game):
+                                        if alien.bg_x == bg_x - 1 and alien.bg_y == bg_y:
+                                            alien.hp = alien.hp_max
+                                            alien.x = alien.x_0
+                                            alien.y = alien.y_0
+                                            aliens_list_in_game.pop(i)
                                     for archer in archers_full_list:
                                         if archer.bg_x == bg_x and archer.bg_y == bg_y:
                                             if archer not in archers_list_in_game:
@@ -851,6 +932,10 @@ while running:
                                         if fly.bg_x == bg_x and fly.bg_y == bg_y:
                                             if fly not in fly_list_in_game:
                                                 fly_list_in_game.append(fly)
+                                    for alien in aliens_full_list:
+                                        if alien.bg_x == bg_x and alien.bg_y == bg_y:
+                                            if alien not in aliens_list_in_game:
+                                                aliens_list_in_game.append(alien)
 
         if is_delay:
             delay_timer += 1
@@ -890,6 +975,10 @@ while running:
                 if fly.bg_x == bg_x - 1 and fly.bg_y == bg_y:
                     fly.hp = fly.hp_max
                     fly_list_in_game.pop(i)
+            for i, alien in enumerate(aliens_list_in_game):
+                if alien.bg_x == bg_x - 1 and alien.bg_y == bg_y:
+                    alien.hp = alien.hp_max
+                    aliens_list_in_game.pop(i)
             for archer in archers_full_list:
                 if archer.bg_x == bg_x and archer.bg_y == bg_y:
                     if archer not in archers_list_in_game:
@@ -902,6 +991,10 @@ while running:
                 if fly.bg_x == bg_x and fly.bg_y == bg_y:
                     if fly not in fly_list_in_game:
                         fly_list_in_game.append(fly)
+            for alien in aliens_full_list:
+                if alien.bg_x == bg_x and alien.bg_y == bg_y:
+                    if alien not in aliens_list_in_game:
+                        aliens_list_in_game.append(alien)
             arrows_right.clear()
             arrows_left.clear()
             bullets_right.clear()
@@ -924,6 +1017,10 @@ while running:
                 if fly.bg_x == bg_x + 1 and fly.bg_y == bg_y:
                     fly.hp = fly.hp_max
                     fly_list_in_game.pop(i)
+            for i, alien in enumerate(aliens_list_in_game):
+                if alien.bg_x == bg_x + 1 and alien.bg_y == bg_y:
+                    alien.hp = alien.hp_max
+                    aliens_list_in_game.pop(i)
             for archer in archers_full_list:
                 if archer.bg_x == bg_x and archer.bg_y == bg_y:
                     if archer not in archers_list_in_game:
@@ -936,6 +1033,10 @@ while running:
                 if fly.bg_x == bg_x and fly.bg_y == bg_y:
                     if fly not in fly_list_in_game:
                         fly_list_in_game.append(fly)
+            for alien in aliens_full_list:
+                if alien.bg_x == bg_x and alien.bg_y == bg_y:
+                    if alien not in aliens_list_in_game:
+                        aliens_list_in_game.append(alien)
             arrows_right.clear()
             arrows_left.clear()
             bullets_right.clear()
@@ -958,6 +1059,10 @@ while running:
                 if fly.bg_x == bg_x and fly.bg_y == bg_y - 1:
                     fly.hp = fly.hp_max
                     fly_list_in_game.pop(i)
+            for i, alien in enumerate(aliens_list_in_game):
+                if alien.bg_x == bg_x and alien.bg_y == bg_y - 1:
+                    alien.hp = alien.hp_max
+                    aliens_list_in_game.pop(i)
             for archer in archers_full_list:
                 if archer.bg_x == bg_x and archer.bg_y == bg_y:
                     if archer not in archers_list_in_game:
@@ -970,6 +1075,10 @@ while running:
                 if fly.bg_x == bg_x and fly.bg_y == bg_y:
                     if fly not in fly_list_in_game:
                         fly_list_in_game.append(fly)
+            for alien in aliens_full_list:
+                if alien.bg_x == bg_x and alien.bg_y == bg_y:
+                    if alien not in aliens_list_in_game:
+                        aliens_list_in_game.append(alien)
             arrows_right.clear()
             arrows_left.clear()
             bullets_right.clear()
@@ -992,6 +1101,10 @@ while running:
                 if fly.bg_x == bg_x and fly.bg_y == bg_y + 1:
                     fly.hp = fly.hp_max
                     fly_list_in_game.pop(i)
+            for i, alien in enumerate(aliens_list_in_game):
+                if alien.bg_x == bg_x and alien.bg_y == bg_y + 1:
+                    alien.hp = alien.hp_max
+                    aliens_list_in_game.pop(i)
             for archer in archers_full_list:
                 if archer.bg_x == bg_x and archer.bg_y == bg_y:
                     if archer not in archers_list_in_game:
@@ -1004,6 +1117,10 @@ while running:
                 if fly.bg_x == bg_x and fly.bg_y == bg_y:
                     if fly not in fly_list_in_game:
                         fly_list_in_game.append(fly)
+            for alien in aliens_full_list:
+                if alien.bg_x == bg_x and alien.bg_y == bg_y:
+                    if alien not in aliens_list_in_game:
+                        aliens_list_in_game.append(alien)
             arrows_right.clear()
             arrows_left.clear()
             bullets_right.clear()
@@ -1062,6 +1179,19 @@ while running:
                                 fly.hp = fly.hp_max
                                 experience += fly.exp
                                 fly.alive = False
+                            try:
+                                bullets_right.pop(i)
+                            except:
+                                pass
+
+                if aliens_list_in_game:
+                    for (index, alien) in enumerate(aliens_list_in_game):
+                        if alien.alive and el.colliderect(alien.alien_stay_left.get_rect(topleft=(alien.x, alien.y))):
+                            alien.decrease_hp(player_damage)
+                            if alien.hp <= 0:
+                                alien.hp = alien.hp_max
+                                experience += alien.exp
+                                alien.alive = False
                             try:
                                 bullets_right.pop(i)
                             except:
@@ -1171,6 +1301,19 @@ while running:
                             except:
                                 pass
 
+                if aliens_list_in_game:
+                    for (index, alien) in enumerate(aliens_list_in_game):
+                        if alien.alive and el.colliderect(alien.alien_stay_right.get_rect(topleft=(alien.x, alien.y))):
+                            alien.decrease_hp(player_damage)
+                            if alien.hp <= 0:
+                                alien.hp = alien.hp_max
+                                experience += alien.exp
+                                alien.alive = False
+                            try:
+                                bullets_left.pop(i)
+                            except:
+                                pass
+
         if arrows_left:
             for (i, el) in enumerate(arrows_left):
                 screen.blit(arrow, (el.x, el.y))
@@ -1243,6 +1386,7 @@ while running:
                 archers_list_in_game = [archer_1]
                 fly_list_in_game = [fly_1]
                 soldiers_list_in_game = []
+                aliens_list_in_game = []
                 bullets_right.clear()
                 bullets_left.clear()
                 arrows_right.clear()

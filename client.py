@@ -5,35 +5,47 @@ import threading
 import time
 
 # Тестовые значения параметров
-nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y = 'player', 50, 142, 100, 100, 25, 0, 1, 0, 0
+# nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y = 'player', 50, 142, 100, 100, 25, 0, 1, 0, 0
 
-def save_game(nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y):
+def save_game(nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y, scene_count):
     try:
-        save_message = f'{nickname};{player_x};{player_y};{hp};{hp_max};{player_damage};{experience};{level};{bg_x};{bg_y}'
+        save_message = f'{nickname};{str(int(player_x))};{str(int(player_y))};{str(int(hp))};{str(int(hp_max))};{str(int(player_damage))};{str(int(experience))};{str(int(level))};{str(int(bg_x))};{str(int(bg_y))};{str(int(scene_count))}'
         return save_message
     except:
         print("Failed to save game!")
 
 def load_game(load_message):
-    global nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y
     try:
-        nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y = tuple(load_message.split(";"))
-        print("Saving applied")
+        load_tuple = tuple(load_message.split(";"))
+        nickname = load_tuple[0]
+        player_x = int(load_tuple[1])
+        player_y = int(load_tuple[2])
+        hp = int(load_tuple[3])
+        hp_max = int(load_tuple[4])
+        player_damage = int(load_tuple[5])
+        experience = int(load_tuple[6])
+        level = int(load_tuple[7])
+        bg_x = int(load_tuple[8])
+        bg_y = int(load_tuple[9])
+        scene_count = int(load_tuple[10])
+        print("Save applied")
+        game_loaded = True
+        return game_loaded, nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y, scene_count
     except:
         print("Failed to load game!")
 
 
-def send_save():
+def send_save(nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y, scene_count):
     start_time = time.time()
     while True:
         timer = time.time()
         if timer - start_time < 10:
             try:
                 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                client.connect(('192.168.43.14', 55555))
-                save_message = save_game(nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y)
+                client.connect(('192.168.43.7', 55555))
+                save_message = save_game(nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y, scene_count)
                 client.send(save_message.encode('ascii'))
-                print("Saving sent")
+                print("Save sent")
                 client.close()
                 break
             except:
@@ -42,14 +54,14 @@ def send_save():
             print("server not responding, save failed")
             break
 
-def request_save():
+def request_save(nickname):
     start_time = time.time()
     while True:
         timer = time.time()
         if timer - start_time < 10:
             try:
                 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                client.connect(('192.168.43.14', 55555))
+                client.connect(('192.168.43.7', 55555))
                 client.send(f'request {nickname}'.encode('ascii'))
                 print("Request sent")
                 break
@@ -64,9 +76,9 @@ def request_save():
             try:
                 message = client.recv(1024).decode('ascii')
                 print("Save loaded")
-                load_game(message)
+                game_loaded, nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y, scene_count = load_game(message)
                 client.close()
-                break
+                return game_loaded, nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y, scene_count
             except:
                 pass
         else:
@@ -74,11 +86,11 @@ def request_save():
             break
 
 
-send_save_thread = threading.Thread(target=send_save)
-send_save_thread.start()
-time.sleep(3)
-
-load_save_thread = threading.Thread(target=request_save)
-load_save_thread.start()
+# send_save_thread = threading.Thread(target=send_save)
+# send_save_thread.start()
+# time.sleep(3)
+#
+# load_save_thread = threading.Thread(target=request_save)
+# load_save_thread.start()
 
 

@@ -148,11 +148,10 @@ soldier_5 = Soldier(550, 262, 5, 0, 1)
 soldier_6 = Soldier(260, 142, 5, 0, 1)
 soldier_7 = Soldier(500, 262, 6, 1, 1.5)
 soldier_8 = Soldier(570, 22, 6, 0, 1.5)
-soldier_9 = Soldier(140, 22, 7, 0, 1.5)
+# soldier_9 = Soldier(140, 22, 7, 0, 1.5)
 soldier_10 = Soldier(80, 262, 7, 1, 1.5)
-soldier_11 = Soldier(500, 262, 7, 1, 1.5)
 
-soldiers_full_list = [soldier_1, soldier_2, soldier_3, soldier_4, soldier_5, soldier_6, soldier_7, soldier_8, soldier_9, soldier_10, soldier_11]
+soldiers_full_list = [soldier_1, soldier_2, soldier_3, soldier_4, soldier_5, soldier_6, soldier_7, soldier_8, soldier_10]
 soldiers_list_in_game = []
 
 soldier_shoot_anim_count = 0
@@ -173,3 +172,58 @@ soldier_died_frame_count = 4
 soldier_died_pos = [(10 + i * (soldier_died_frame_width + 1), 87) for i in range(soldier_died_frame_count)]
 soldier_died_right = [soldier_sheet.subsurface(pygame.Rect(pos, (soldier_died_frame_width, soldier_died_frame_height))) for pos in soldier_died_pos]
 soldier_died_left = [pygame.transform.flip(soldier_sheet.subsurface(pygame.Rect(pos, (soldier_died_frame_width, soldier_died_frame_height))), True, False) for pos in soldier_died_pos]
+
+
+alien_sheet = pygame.image.load('images/alien.png')
+class Alien(pygame.sprite.Sprite):
+    def __init__(self, x_0, y_0, bg_x, bg_y, width, lev):
+        super().__init__()
+        self.lev = lev
+        self.x_0 = x_0
+        self.y_0 = y_0
+        self.x = self.x_0
+        self.y = self.y_0
+        self.right = False
+        self.bg_x = bg_x
+        self.bg_y = bg_y
+        self.width = width
+        self.alive = True
+        self.shock = False
+        self.damage = 40 * self.lev
+        self.hp_max = 140 * self.lev
+        self.hp = 140 * self.lev
+        self.exp = 70 * self.lev
+        self.alien_stay_right = alien_sheet.subsurface(pygame.Rect((10,2), (76, 78)))
+        self.alien_stay_left = pygame.transform.flip(alien_sheet.subsurface(pygame.Rect((3,2), (57, 78))), True, False)
+    def decrease_hp(self, player_damage):
+        self.hp -= player_damage
+        if self.hp < 0:
+            self.hp = 0
+        if self.hp > self.hp_max:
+            self.hp = self.hp_max
+
+alien_walk_frame_height = 92
+alien_walk_frame_width = 58
+alien_walk_frame_count = 10
+alien_walk_pos = [(i * (alien_walk_frame_width + 1), 0) for i in range(alien_walk_frame_count)]
+alien_walk_left = [alien_sheet.subsurface(pygame.Rect(pos, (alien_walk_frame_width, alien_walk_frame_height))) for pos in alien_walk_pos]
+alien_walk_right = [pygame.transform.flip(alien_sheet.subsurface(pygame.Rect(pos, (alien_walk_frame_width, alien_walk_frame_height))), True, False) for pos in alien_walk_pos]
+
+alien_died_frame_height = 92
+alien_died_frame_width = 58
+alien_died_frame_count = 5
+alien_died_pos = [(i * (alien_died_frame_width + 1), 100) for i in range(alien_died_frame_count)]
+alien_died_left = [alien_sheet.subsurface(pygame.Rect(pos, (alien_died_frame_width, alien_died_frame_height))) for pos in alien_died_pos]
+alien_died_right = [pygame.transform.flip(alien_sheet.subsurface(pygame.Rect(pos, (alien_died_frame_width, alien_died_frame_height))), True, False) for pos in alien_died_pos]
+
+alien_1 = Alien(330, 8, 7, 0, 330, 1)
+alien_2 = Alien(500, 248, 7, 1, 400, 1)
+
+aliens_full_list = [alien_1, alien_2]
+aliens_list_in_game = []
+
+alien_walk_anim_count = 0
+alien_walk_anim_timer = 0
+alien_died_anim_count = 0
+alien_died_anim_timer = 0
+

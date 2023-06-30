@@ -13,6 +13,7 @@ sip_sound = pygame.mixer.Sound('sounds/sip.mp3')
 key_card_sound = pygame.mixer.Sound('sounds/key_card.mp3')
 flap_sound = pygame.mixer.Sound('sounds/flap.mp3')
 shoot_sound = pygame.mixer.Sound('sounds/shoot.mp3')
+shock_sound = pygame.mixer.Sound('sounds/shock.mp3')
 
 # def play_sound(sound_file):
 #     pygame.mixer.Sound(sound_file).play()

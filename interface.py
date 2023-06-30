@@ -16,6 +16,9 @@ continue_label_rect = continue_label.get_rect(topleft=(250, 250))
 start_label = [label.render("Start game", False, (150 + i * 20, 151, 27)) for i in range(5)]
 start_label_count = 0
 
+load_game_label = label.render("Load game", False, (209, 151, 27))
+game_loaded = False
+
 controls_label = label.render("Controls", False, (209, 151, 27))
 back_start_menu_label = label.render("Back start menu", False, (209, 151, 27))
 

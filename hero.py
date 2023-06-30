@@ -24,6 +24,7 @@ hp_max = 100
 player_damage = 25
 experience = 0
 level = 1
+nickname = "Player_1"
 
 hp_line_icon = pygame.image.load('images/hp_line.png')
 hp_icon = pygame.image.load('images/hp.png')
