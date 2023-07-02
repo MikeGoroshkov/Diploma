@@ -42,7 +42,7 @@ def send_save(nickname, player_x, player_y, hp, hp_max, player_damage, experienc
         if timer - start_time < 10:
             try:
                 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                client.connect(('192.168.43.7', 55555))
+                client.connect(('89.223.122.20', 55555))
                 save_message = save_game(nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y, scene_count)
                 client.send(save_message.encode('ascii'))
                 print("Save sent")
@@ -61,7 +61,7 @@ def request_save(nickname):
         if timer - start_time < 10:
             try:
                 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                client.connect(('192.168.43.7', 55555))
+                client.connect(('89.223.122.20', 55555))
                 client.send(f'request {nickname}'.encode('ascii'))
                 print("Request sent")
                 break
