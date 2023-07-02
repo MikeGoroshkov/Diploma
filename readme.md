@@ -239,9 +239,9 @@ pygame.Surface. Так создаются анимации персонажа.
 
 Для возпроизведения анимации внутри игрового цикла можно использовать такой код:
 
-      screen.blit(walk_right[walk_anim_count], (player_x, player_y))
+      screen.blit(walk_right[walk_anim_count], (player.x, player.y))
                   right_orient = True
-                  player_x += walk_speed
+                  player.x += player.walk_speed
                   walk_anim_timer += 1
                   if walk_anim_count == 11 and walk_anim_timer == 3:
                       walk_anim_count = 0
@@ -253,7 +253,7 @@ pygame.Surface. Так создаются анимации персонажа.
 Этот код использует метод blit() для отображения изображения на экране. Он отображает текущий кадр анимации для движения
 вправо с помощью переменной walk_armed_anim_count, которая изменяется когда переменная walk_anim_timer == 3. Переменная 
 walk_anim_timer меняется с каждым проходом цикла. В данном случае число 3 показывает, сколько пройдет кадров до смены 
-следующего кадра в игре. Координаты отображения на экране задаются переменными player_x и player_y.
+следующего кадра в игре. Координаты отображения на экране задаются переменными player.x и player.y.
 
 Стоит отметить, что данный проект не является коммерческим, а я не имею навыков создания анимации. Поэтому я
 использовал уже готовые анимации персонажей из существующих игр. Источником анимаций является сайт 
@@ -303,12 +303,12 @@ pygame.mixer.Sound() - это класс для загрузки звуковы�
 
 Загрузив изображение для персонажа,
 
-      player_stay_right = spritesheet.subsurface(pygame.Rect((0,6), (43, 78)))
+      player.stay_right = spritesheet.subsurface(pygame.Rect((0,6), (43, 78)))
 
 назначаем его нашему герою:
 
-      player = player_stay_right
-      player_rect = player.get_rect(topleft=(player_x, player_y)) 
+      player = player.stay_right
+      player.rect = player.get_rect(topleft=(player.x, player.y)) 
 
 
 Этот код использует метод get_rect() для получения прямоугольника, который описывает границы изображения.
@@ -318,15 +318,15 @@ pygame.mixer.Sound() - это класс для загрузки звуковы�
 
 Эти параметры относятся к главному герою игры:
 
-      walk_speed - скорость передвижения героя без оружия
-      walk_armed_speed - скорость передвижения героя с оружием
-      player_x - координата x героя на экране
-      player_y - координата y героя на экране
+      player.walk_speed - скорость передвижения героя без оружия
+      player.walk_armed_speed - скорость передвижения героя с оружием
+      player.x - координата x героя на экране
+      player.y - координата y героя на экране
       hp - текущее количество здоровья героя
       hp_max - максимальное количество здоровья героя
-      player_damage - урон, наносимый героем врагам
-      experience - количество опыта, полученного героем
-      level - уровень героя
+      player.damage - урон, наносимый героем врагам
+      player.experience - количество опыта, полученного героем
+      player.level - уровень героя
 
 ***Для создания врагов в игре***
 , количество и параметры которых будут различаться удобно использовать классы, например:
@@ -346,8 +346,8 @@ pygame.mixer.Sound() - это класс для загрузки звуковы�
               self.exp = 50 * self.lev
               self.soldier_stay_right = soldier_sheet.subsurface(pygame.Rect((10,2), (76, 78)))
               self.soldier_stay_left = pygame.transform.flip(soldier_sheet.subsurface(pygame.Rect((3,2), (57, 78))), True, False)
-          def decrease_hp(self, player_damage):
-              self.hp -= player_damage
+          def decrease_hp(self, player.damage):
+              self.hp -= player.damage
               if self.hp < 0:
                   self.hp = 0
               if self.hp > self.hp_max:
@@ -725,10 +725,10 @@ pygame.time.Clock() - это объект, который помогает на�
 Также в процессе геймплея герой накапливает опыт. После набора определенного опыта увеличивается уровень 
 персонажа, его здоровье и наносим им ущерб врагам
 
-        if experience >= (level**2) * 100:
-            experience -= (level**2) * 100
-            level += 1
-            player_damage *= 1.2
+        if player.experience >= (player.level**2) * 100:
+            player.experience -= (player.level**2) * 100
+            player.level += 1
+            player.damage *= 1.2
             hp_max *= 1.1
             hp *= 1.1
 
@@ -736,10 +736,10 @@ pygame.time.Clock() - это объект, который помогает на�
 
         for i in range(int(hp/10)):
             screen.blit(hp_line_icon, (45 + i * 5, 5))
-        level_label = label_3.render(f"Level: {level}", False, (175, 50, 50))
-        screen.blit(level_label, (200, 5))
+        player.level_label = label_3.render(f"player.level: {player.level}", False, (175, 50, 50))
+        screen.blit(player.level_label, (200, 5))
         screen.blit(exp_line_icon, (270, 9))
-        for i in range(int((experience/((level**2) * 100))*10)):
+        for i in range(int((player.experience/((player.level**2) * 100))*10)):
             screen.blit(exp_icon, (270 + i * 10, 9))
 
 В процессе игры надо отслеживать: находится ли герой на платформе. Если не находится, то он должен падать.
@@ -747,23 +747,23 @@ pygame.time.Clock() - это объект, который помогает на�
 положение героя на высоту спрайта, которая отличается для сидячего и стоячего положения:
 
         for platform in platforms[bg_x][bg_y]:
-            if player_rect.colliderect(platform.rect):
+            if player.rect.colliderect(platform.rect):
                 if falling_high > 8:
                     is_getup = True
                     hp -= 25
                     falling_high = 0
                 if is_fall:
                     if right_orient:
-                        player_x += 25
+                        player.x += 25
                     if not right_orient:
-                        player_x -= 25
+                        player.x -= 25
                     is_fall = False
                     falling_high = 0
                     is_busy = False
                 if not is_sit:
-                    player_y = platform.rect.top - 77
+                    player.y = platform.rect.top - 77
                 else:
-                    player_y = platform.rect.top - 49
+                    player.y = platform.rect.top - 49
                 falling_anim_count = 0
                 on_platform = True
 
@@ -774,21 +774,21 @@ pygame.time.Clock() - это объект, который помогает на�
             is_busy = True
             is_somersault = False
             if right_orient:
-                screen.blit(falling_right[falling_anim_count], (player_x, player_y))
+                screen.blit(falling_right[falling_anim_count], (player.x, player.y))
             if not right_orient:
-                screen.blit(falling_left[falling_anim_count], (player_x, player_y))
+                screen.blit(falling_left[falling_anim_count], (player.x, player.y))
             falling_anim_timer += 1
             if falling_anim_count == 7 and falling_anim_timer == 3:
                 falling_high += 1
                 falling_anim_timer = 0
-                player_y += 52
+                player.y += 52
             elif falling_anim_timer == 3:
                 falling_high += 1
                 falling_anim_count += 1
                 falling_anim_timer = 0
-                player_y += 0.5 * falling_anim_count ** 2
+                player.y += 0.5 * falling_anim_count ** 2
 
-Как можно заметить переменная player_y меняется квадратически, что имитирует ускорение свободного падения.
+Как можно заметить переменная player.y меняется квадратически, что имитирует ускорение свободного падения.
 Также на время падения включаются флаги is_fall и is_busy, что говорит о том, что герой не может выполнять 
 другие действия (например, стрелять). Если до этого герой производил кувырок is_somersault, эта операция прерывается,
 флаг становится is_somersault = False. Соответственно, для левостороннего и правостороннего положения во 
@@ -802,11 +802,11 @@ pygame.time.Clock() - это объект, который помогает на�
 Например, для перемещения персонажа влево -
 
         elif keys[pygame.K_LEFT] and not is_busy and not is_sit and not is_armed:
-            screen.blit(walk_left[walk_anim_count], (player_x, player_y))
+            screen.blit(walk_left[walk_anim_count], (player.x, player.y))
             right_orient = False
-            player_x -= walk_speed
+            player.x -= player.walk_speed
 
-где walk_speed - скорость перемещения персонажа.
+где player.walk_speed - скорость перемещения персонажа.
 
 При этом, если персонаж в положении сидя и не может идти, то он может совершить кувырок, но при этом совешить разворот,
 если находится в противоположном положении:
@@ -824,9 +824,9 @@ pygame.time.Clock() - это объект, который помогает на�
 
         elif keys[pygame.K_b] and is_armed and not is_busy:
             if right_orient:
-                bullets_right.append(bullet.get_rect(topleft=(player_x, player_y)))
+                bullets_right.append(bullet.get_rect(topleft=(player.x, player.y)))
             else:
-                bullets_left.append(bullet.get_rect(topleft=(player_x, player_y)))
+                bullets_left.append(bullet.get_rect(topleft=(player.x, player.y)))
             is_shoot = True
             is_busy = True
 
@@ -868,10 +868,10 @@ pygame.time.Clock() - это объект, который помогает на�
                 if archers_list_in_game:
                     for (index, archer) in enumerate(archers_list_in_game):
                         if archer.alive and el.colliderect(archer.archer_stay_left.get_rect(topleft=(archer.x, archer.y))):
-                            archer.decrease_hp(player_damage)
+                            archer.decrease_hp(player.damage)
                             if archer.hp <= 0:
                                 archer.hp = archer.hp_max
-                                experience += archer.exp
+                                player.experience += archer.exp
                                 archer.alive = False
                             try:
                                 bullets_right.pop(i)
@@ -886,22 +886,22 @@ pygame.time.Clock() - это объект, который помогает на�
 
 Смена уровня игры происходит, когда герой пересекает границы экрана, например:
 
-        if player_y < 0 and bg_y != 0:
+        if player.y < 0 and bg_y != 0:
             bg_y -= 1
-            player_y = player_y + screen_height
+            player.y = player.y + screen_height
 
 Также смена локации также происходит, когда герой использует ключ из инвентаря напротив двери:
 
         for i, item in enumerate(inventory_list):
             if item.name == 'key':
                 for door in doors[bg_x][bg_y]:
-                    if player_rect.colliderect(door.rect):
+                    if player.rect.colliderect(door.rect):
                         if scene_count < 4:
                             bg_x += 1
                         scene = True
                         scene_count += 1
                         key_card_sound.play()
-                        player_x = 30
+                        player.x = 30
                         inventory_list.pop(i)
 
 При этом проигрывается звук открывания двери key_card_sound и включается флаг проигрывания 
@@ -1144,6 +1144,6 @@ Mac OS X, которые можно запускать без установки
 - interface.py
 - inventory.py
 - hero.py
-- levels.py
+- player.levels.py
 - enemies.py
 - sounds.py

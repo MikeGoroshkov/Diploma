@@ -45,10 +45,10 @@ while intro:
             running = True
             scene = True
         if load_game_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
-            # load_save_thread = threading.Thread(target=request_save(nickname))
+            # load_save_thread = threading.Thread(target=request_save(player.nickname))
             # load_save_thread.start()
             try:
-                game_loaded, nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y, scene_count = request_save(nickname)
+                game_loaded, player.nickname, player.x, player.y, player.hp, player.hp_max, player.damage, player.experience, player.level, bg_x, bg_y, scene_count = request_save(player.nickname)
                 if game_loaded:
                     intro = False
                     running = True
@@ -123,66 +123,66 @@ while running:
 
 
     if gameplay and not scene:
-        if hp <= 0:
+        if player.hp <= 0:
             gameplay = False
-        if experience >= (level**2) * 100:
-            experience -= (level**2) * 100
-            level += 1
-            player_damage = int(player_damage*1.2)
-            hp_max = int(hp_max*1.1)
-            hp = int(hp*1.1)
+        if player.experience >= (player.level**2) * 100:
+            player.experience -= (player.level**2) * 100
+            player.level += 1
+            player.damage = int(player.damage*1.2)
+            player.hp_max = int(player.hp_max*1.1)
+            player.hp = int(player.hp*1.1)
 
         screen.blit(bg[bg_y][bg_x], (0, 0))
         # platforms = eval(f'platforms_{bg_x + 1}_{bg_y + 1}')
         # # platforms.draw(screen)
 
         screen.blit(hp_icon, (25, 5))
-        for i in range(int(hp/10)):
-            screen.blit(hp_line_icon, (45 + i * 5, 5))
-        level_label = label_3.render(f"Level: {level}", False, (175, 50, 50))
-        screen.blit(level_label, (200, 5))
+        for i in range(int(player.hp/10)):
+            screen.blit(player.hp_line_icon, (45 + i * 5, 5))
+        player.level_label = label_3.render(f"level: {player.level}", False, (175, 50, 50))
+        screen.blit(player.level_label, (200, 5))
         screen.blit(exp_line_icon, (270, 9))
-        for i in range(int((experience/((level**2) * 100))*10)):
+        for i in range(int((player.experience/((player.level**2) * 100))*10)):
             screen.blit(exp_icon, (270 + i * 10, 9))
         for i, item in enumerate(inventory_list):
             screen.blit(item.image, (590 - i * 20, 5))
         screen.blit(border, (border_x, border_y))
 
-        player_rect = player.get_rect(topleft=(player_x, player_y))
+        player.rect = hero.get_rect(topleft=(player.x, player.y))
         keys = pygame.key.get_pressed()
 
         on_platform = False
         for platform in platforms[bg_x][bg_y]:
             for i in range(platform.width // 30):
                 screen.blit(tile_1, (platform.rect.x + i * 30, platform.rect.y))
-            if player_rect.colliderect(platform.rect) and not is_jump_up and not is_jump_down:
+            if player.rect.colliderect(platform.rect) and not is_jump_up and not is_jump_down:
                 if falling_high > 8:
                     is_getup = True
-                    hp -= 25
+                    player.hp -= 25
                     falling_high = 0
                 if is_fall:
                     if right_orient:
-                        player_x += 25
+                        player.x += 25
                     if not right_orient:
-                        player_x -= 25
+                        player.x -= 25
                     is_fall = False
                     falling_high = 0
                     is_busy = False
                 if not is_sit:
-                    player_y = platform.rect.top - 77
+                    player.y = platform.rect.top - 77
                 else:
-                    player_y = platform.rect.top - 49
+                    player.y = platform.rect.top - 49
                 falling_anim_count = 0
                 on_platform = True
 
         for wall in walls[bg_x][bg_y]:
             for i in range(wall.height // 30):
                 screen.blit(tile_2, (wall.rect.x, wall.rect.y + i * 30))
-            if player_rect.colliderect(wall.rect):
+            if player.rect.colliderect(wall.rect):
                 if right_orient and not is_wounded or not right_orient and is_wounded:
-                    player_x -= 15
+                    player.x -= 15
                 else:
-                    player_x += 15
+                    player.x += 15
 
         for door in doors[bg_x][bg_y]:
             if bg_x == 7 and bg_y == 1:
@@ -200,7 +200,7 @@ while running:
         for i, item in enumerate(items_list):
             if item.bg_x == bg_x and item.bg_y == bg_y:
                 screen.blit(item.image, (item.x, item.y))
-                if item.rect.colliderect(player_rect) and is_sit:
+                if item.rect.colliderect(player.rect) and is_sit:
                     inventory_list.append(item)
                     items_list.pop(i)
 
@@ -208,7 +208,7 @@ while running:
             if archer.alive:
                 for i in range(int(archer.hp/archer.hp_max*10)):
                     screen.blit(enemy_hp_line_icon, (archer.x + 15 + i * 5, archer.y - 10))
-                if archer.y - player_y < 50 and archer.y - player_y > -50:
+                if archer.y - player.y < 50 and archer.y - player.y > -50:
                     screen.blit(archer_shoot_left[archer_shoot_anim_count], (archer.x-48, archer.y-28))
                     archer_shoot_anim_timer += 1
                     if archer_shoot_anim_count == 5 and archer_shoot_anim_timer == 5:
@@ -237,18 +237,18 @@ while running:
             if soldier.alive:
                 for i in range(int(soldier.hp/soldier.hp_max*10)):
                     screen.blit(enemy_hp_line_icon, (soldier.x + 10 + i * 5, soldier.y + 5))
-                if soldier.y - player_y < 50 and soldier.y - player_y > -50:
-                    if player_x >= soldier.x:
+                if soldier.y - player.y < 50 and soldier.y - player.y > -50:
+                    if player.x >= soldier.x:
                         screen.blit(soldier_shoot_right[soldier_shoot_anim_count], (soldier.x, soldier.y))
-                    if player_x < soldier.x:
+                    if player.x < soldier.x:
                         screen.blit(soldier_shoot_left[soldier_shoot_anim_count], (soldier.x, soldier.y))
                     soldier_shoot_anim_timer += 1
                     if soldier_shoot_anim_count == 2 and soldier_shoot_anim_timer == 5:
                         soldier_shoot_anim_timer = 0
                         soldier_shoot_anim_count = 0
-                        if player_x >= soldier.x:
+                        if player.x >= soldier.x:
                             pellets_right.append(pellet.get_rect(topleft=(soldier.x + 56, soldier.y + 24)))
-                        if player_x < soldier.x:
+                        if player.x < soldier.x:
                             pellets_left.append(pellet.get_rect(topleft=(soldier.x + 17, soldier.y + 24)))
                         shoot_sound.play()
                     elif soldier_shoot_anim_timer == 5:
@@ -257,9 +257,9 @@ while running:
                 else:
                     screen.blit(soldier.soldier_stay_left, (soldier.x, soldier.y))
             else:
-                if player_x >= soldier.x:
+                if player.x >= soldier.x:
                     screen.blit(soldier_died_right[soldier_died_anim_count], (soldier.x - soldier_died_anim_count * 10, soldier.y))
-                if player_x < soldier.x:
+                if player.x < soldier.x:
                     screen.blit(soldier_died_left[soldier_died_anim_count], (soldier.x + soldier_died_anim_count * 10, soldier.y))
                 soldier_died_anim_timer += 1
                 if soldier_died_anim_count == 3 and soldier_died_anim_timer == 4:
@@ -273,9 +273,9 @@ while running:
 
         for index, fly in enumerate(fly_list_in_game):
             if fly.alive:
-                if fly.fly_stay_left.get_rect(topleft=(fly.x, fly.y)).colliderect(player_rect) and not is_wounded and not is_somersault and not is_climb and not is_climb_down:
+                if fly.fly_stay_left.get_rect(topleft=(fly.x, fly.y)).colliderect(player.rect) and not is_wounded and not is_somersault and not is_climb and not is_climb_down:
                     is_wounded = True
-                    hp -= fly.damage
+                    player.hp -= fly.damage
                 for i in range(int(fly.hp/fly.hp_max*10)):
                     screen.blit(enemy_hp_line_icon, (fly.x + i * 5, fly.y - 5))
                 if fly.x_0 - fly.x > fly.width:
@@ -320,9 +320,9 @@ while running:
                     alien.shock = True
                 else:
                     alien.shock = False
-                if alien.alien_stay_left.get_rect(topleft=(alien.x, alien.y)).colliderect(player_rect) and alien.shock and not is_wounded and not is_somersault and not is_climb and not is_climb_down:
+                if alien.alien_stay_left.get_rect(topleft=(alien.x, alien.y)).colliderect(player.rect) and alien.shock and not is_wounded and not is_somersault and not is_climb and not is_climb_down:
                     is_wounded = True
-                    hp -= alien.damage
+                    player.hp -= alien.damage
                 for i in range(int(alien.hp/alien.hp_max*10)):
                     screen.blit(enemy_hp_line_icon, (alien.x + i * 5, alien.y + 5))
                 if alien.x_0 - alien.x > alien.width:
@@ -367,46 +367,46 @@ while running:
             is_somersault = False
             if is_sit:
                 if right_orient:
-                    screen.blit(falling_right[falling_anim_count], (player_x, player_y - 28))
+                    screen.blit(falling_right[falling_anim_count], (player.x, player.y - 28))
                 if not right_orient:
-                    screen.blit(falling_left[falling_anim_count], (player_x - 15, player_y - 28))
+                    screen.blit(falling_left[falling_anim_count], (player.x - 15, player.y - 28))
             else:
                 if right_orient:
-                    screen.blit(falling_right[falling_anim_count], (player_x, player_y))
+                    screen.blit(falling_right[falling_anim_count], (player.x, player.y))
                 if not right_orient:
-                    screen.blit(falling_left[falling_anim_count], (player_x - 15, player_y))
+                    screen.blit(falling_left[falling_anim_count], (player.x - 15, player.y))
             falling_anim_timer += 1
             if falling_anim_count == 7 and falling_anim_timer == 3:
                 falling_high += 1
                 falling_anim_timer = 0
-                player_y += 52
+                player.y += 52
             elif falling_anim_timer == 3:
                 falling_high += 1
                 falling_anim_count += 1
                 falling_anim_timer = 0
-                player_y += 0.5 * falling_anim_count ** 2
+                player.y += 0.5 * falling_anim_count ** 2
 
         elif is_getup:
             is_busy = True
             if right_orient:
                 if getup_anim_count > 8 and getup_anim_count < 13:
-                    player_x += 1
+                    player.x += 1
                 if is_sit:
-                    screen.blit(getup_right[getup_anim_count], (player_x, player_y-28))
+                    screen.blit(getup_right[getup_anim_count], (player.x, player.y-28))
                 else:
-                    screen.blit(getup_right[getup_anim_count], (player_x, player_y))
+                    screen.blit(getup_right[getup_anim_count], (player.x, player.y))
             if not right_orient:
                 if getup_anim_count > 8 and getup_anim_count < 13:
-                    player_x -= 1
+                    player.x -= 1
                 if is_sit:
-                    screen.blit(getup_left[getup_anim_count], (player_x, player_y-28))
+                    screen.blit(getup_left[getup_anim_count], (player.x, player.y-28))
                 else:
-                    screen.blit(getup_left[getup_anim_count], (player_x, player_y))
+                    screen.blit(getup_left[getup_anim_count], (player.x, player.y))
             getup_anim_timer += 1
             if getup_anim_count == 18 and getup_anim_timer == 3:
                 getup_anim_timer = 0
                 getup_anim_count = 0
-                player_x -= 18
+                player.x -= 18
                 is_getup = False
                 is_busy = False
             elif getup_anim_timer == 3:
@@ -417,27 +417,27 @@ while running:
             is_busy = True
             if right_orient:
                 if wound_anim_count < 6:
-                    player_x -= 5
+                    player.x -= 5
                 if wound_anim_count > 16 and wound_anim_count < 21:
-                    player_x += 1
+                    player.x += 1
                 if is_sit:
-                    screen.blit(wound_right[wound_anim_count], (player_x, player_y - 28))
+                    screen.blit(wound_right[wound_anim_count], (player.x, player.y - 28))
                 else:
-                    screen.blit(wound_right[wound_anim_count], (player_x, player_y))
+                    screen.blit(wound_right[wound_anim_count], (player.x, player.y))
             if not right_orient:
                 if wound_anim_count < 6:
-                    player_x += 5
+                    player.x += 5
                 if wound_anim_count > 16 and wound_anim_count < 21:
-                    player_x -= 1
+                    player.x -= 1
                 if is_sit:
-                    screen.blit(wound_left[wound_anim_count], (player_x, player_y - 28))
+                    screen.blit(wound_left[wound_anim_count], (player.x, player.y - 28))
                 else:
-                    screen.blit(wound_left[wound_anim_count], (player_x, player_y))
+                    screen.blit(wound_left[wound_anim_count], (player.x, player.y))
             wound_anim_timer += 1
             if wound_anim_count == 26 and wound_anim_timer == 3:
                 wound_anim_timer = 0
                 wound_anim_count = 0
-                player_x -= 18
+                player.x -= 18
                 is_wounded = False
                 is_busy = False
             elif wound_anim_timer == 3:
@@ -446,32 +446,32 @@ while running:
 
         elif is_climb:
             if right_orient:
-                screen.blit(climb_right[climb_anim_count], (player_x, player_y-120))
+                screen.blit(climb_right[climb_anim_count], (player.x, player.y-120))
             if not right_orient:
-                screen.blit(climb_left[climb_anim_count], (player_x, player_y-120))
+                screen.blit(climb_left[climb_anim_count], (player.x, player.y-120))
             climb_anim_timer += 1
             if climb_anim_count == 24 and climb_anim_timer == 2:
                 climb_anim_count = 0
                 climb_anim_timer = 0
                 if right_orient:
-                    player_x += 10
+                    player.x += 10
                 else:
-                    player_x -= 10
+                    player.x -= 10
                 is_climb = False
                 is_busy = False
-                player_y -= 120
+                player.y -= 120
             elif climb_anim_timer == 2:
                 climb_anim_count += 1
                 climb_anim_timer = 0
 
         elif is_climb_down:
             if right_orient:
-                screen.blit(climb_down_right[climb_down_anim_count], (player_x, player_y))
+                screen.blit(climb_down_right[climb_down_anim_count], (player.x, player.y))
             if not right_orient:
-                screen.blit(climb_down_left[climb_down_anim_count], (player_x, player_y))
+                screen.blit(climb_down_left[climb_down_anim_count], (player.x, player.y))
             climb_down_anim_timer += 1
             if climb_down_anim_count == 24 and climb_down_anim_timer == 2:
-                player_y += 120
+                player.y += 120
                 climb_down_anim_count = 0
                 climb_down_anim_timer = 0
                 is_climb_down = False
@@ -482,9 +482,9 @@ while running:
 
         elif is_sit_down:
             if right_orient:
-                screen.blit(sit_down_right[sit_down_anim_count], (player_x, player_y))
+                screen.blit(sit_down_right[sit_down_anim_count], (player.x, player.y))
             if not right_orient:
-                screen.blit(sit_down_left[sit_down_anim_count], (player_x, player_y))
+                screen.blit(sit_down_left[sit_down_anim_count], (player.x, player.y))
             sit_down_anim_timer += 1
             if sit_down_anim_count == 6 and sit_down_anim_timer == 2:
                 sit_down_anim_count = 0
@@ -492,16 +492,16 @@ while running:
                 is_sit_down = False
                 is_busy = False
                 is_sit = True
-                player_y += 28
+                player.y += 28
             elif sit_down_anim_timer == 2:
                 sit_down_anim_count += 1
                 sit_down_anim_timer = 0
 
         elif is_sit_up:
             if right_orient:
-                screen.blit(sit_down_right[len(sit_down_right) - sit_down_anim_count - 1], (player_x, player_y))
+                screen.blit(sit_down_right[len(sit_down_right) - sit_down_anim_count - 1], (player.x, player.y))
             if not right_orient:
-                screen.blit(sit_down_left[len(sit_down_right) - sit_down_anim_count - 1], (player_x, player_y))
+                screen.blit(sit_down_left[len(sit_down_right) - sit_down_anim_count - 1], (player.x, player.y))
             sit_down_anim_timer += 1
             if sit_down_anim_count == 6 and sit_down_anim_timer == 2:
                 sit_down_anim_count = 0
@@ -515,9 +515,9 @@ while running:
 
         elif is_sit_turn:
             if right_orient:
-                screen.blit(sit_turn_right[sit_turn_anim_count], (player_x, player_y + 4))
+                screen.blit(sit_turn_right[sit_turn_anim_count], (player.x, player.y + 4))
             if not right_orient:
-                screen.blit(sit_turn_left[sit_turn_anim_count], (player_x, player_y + 4))
+                screen.blit(sit_turn_left[sit_turn_anim_count], (player.x, player.y + 4))
             sit_turn_anim_timer += 1
             if sit_turn_anim_count == 8 and sit_turn_anim_timer == 2:
                 sit_turn_anim_count = 0
@@ -534,13 +534,13 @@ while running:
 
         elif is_jump:
             if right_orient:
-                screen.blit(jump_right[jump_anim_count], (player_x + 5, player_y))
+                screen.blit(jump_right[jump_anim_count], (player.x + 5, player.y))
                 if jump_anim_count > 3 and jump_anim_count < 16:
-                    player_x += 5
+                    player.x += 5
             if not right_orient:
-                screen.blit(jump_left[jump_anim_count], (player_x - 21, player_y))
+                screen.blit(jump_left[jump_anim_count], (player.x - 21, player.y))
                 if jump_anim_count > 3 and jump_anim_count < 16:
-                    player_x -= 5
+                    player.x -= 5
             jump_anim_timer += 1
             if jump_anim_count == 18 and jump_anim_timer == 2:
                 jump_anim_count = 0
@@ -553,11 +553,11 @@ while running:
 
         elif is_somersault:
             if right_orient:
-                screen.blit(somersault_right[somersault_anim_count], (player_x + 15, player_y+4))
-                player_x += 5
+                screen.blit(somersault_right[somersault_anim_count], (player.x + 15, player.y+4))
+                player.x += 5
             if not right_orient:
-                screen.blit(somersault_left[somersault_anim_count], (player_x - 15, player_y+4))
-                player_x -= 5
+                screen.blit(somersault_left[somersault_anim_count], (player.x - 15, player.y+4))
+                player.x -= 5
             somersault_anim_timer += 1
             if somersault_anim_count == 8 and somersault_anim_timer == 2:
                 somersault_anim_count = 0
@@ -570,9 +570,9 @@ while running:
 
         elif is_jump_up:
             if right_orient:
-                screen.blit(jump_up_right[jump_up_anim_count], (player_x, player_y-42))
+                screen.blit(jump_up_right[jump_up_anim_count], (player.x, player.y-42))
             if not right_orient:
-                screen.blit(jump_up_left[jump_up_anim_count], (player_x, player_y-42))
+                screen.blit(jump_up_left[jump_up_anim_count], (player.x, player.y-42))
             jump_up_anim_timer += 1
             if jump_up_anim_count == 16 and jump_up_anim_timer == 2:
                 jump_up_anim_count = 0
@@ -580,12 +580,12 @@ while running:
                 is_jump_up = False
                 if right_orient:
                     for ledge in ledges_left[bg_x][bg_y]:
-                        if player_x + 21 > ledge.rect.left and player_x + 21 < ledge.rect.right - 10 and player_y - ledge.rect.top < 50:
+                        if player.x + 21 > ledge.rect.left and player.x + 21 < ledge.rect.right - 10 and player.y - ledge.rect.top < 50:
                             is_climb = True
                             is_busy = True
                 if not right_orient:
                     for ledge in ledges_right[bg_x][bg_y]:
-                        if player_x + 21 > ledge.rect.left and player_x + 21 < ledge.rect.right - 10 and player_y - ledge.rect.top < 50:
+                        if player.x + 21 > ledge.rect.left and player.x + 21 < ledge.rect.right - 10 and player.y - ledge.rect.top < 50:
                             is_climb = True
                             is_busy = True
                 if not is_climb:
@@ -596,9 +596,9 @@ while running:
 
         elif is_jump_down:
             if right_orient:
-                screen.blit(jump_up_right[len(jump_up_right) - jump_up_anim_count - 1], (player_x, player_y-42))
+                screen.blit(jump_up_right[len(jump_up_right) - jump_up_anim_count - 1], (player.x, player.y-42))
             if not right_orient:
-                screen.blit(jump_up_left[len(jump_up_left) - jump_up_anim_count - 1], (player_x, player_y-42))
+                screen.blit(jump_up_left[len(jump_up_left) - jump_up_anim_count - 1], (player.x, player.y-42))
             jump_up_anim_timer += 1
             if jump_up_anim_count == 16 and jump_up_anim_timer == 2:
                 jump_up_anim_count = 0
@@ -613,9 +613,9 @@ while running:
             is_busy = True
             if not is_sit:
                 if right_orient:
-                    screen.blit(arm_right[arm_anim_count], (player_x, player_y))
+                    screen.blit(arm_right[arm_anim_count], (player.x, player.y))
                 if not right_orient:
-                    screen.blit(arm_left[arm_anim_count], (player_x, player_y))
+                    screen.blit(arm_left[arm_anim_count], (player.x, player.y))
                 arm_anim_timer += 1
                 if arm_anim_count == 12 and arm_anim_timer == 1:
                     arm_anim_count = 0
@@ -628,9 +628,9 @@ while running:
                     arm_anim_timer = 0
             else:
                 if right_orient:
-                    screen.blit(sit_arm_right[arm_anim_count], (player_x+8, player_y))
+                    screen.blit(sit_arm_right[arm_anim_count], (player.x+8, player.y))
                 if not right_orient:
-                    screen.blit(sit_arm_left[arm_anim_count], (player_x-8, player_y))
+                    screen.blit(sit_arm_left[arm_anim_count], (player.x-8, player.y))
                 arm_anim_timer += 1
                 if arm_anim_count == 9 and arm_anim_timer == 1:
                     arm_anim_count = 0
@@ -646,9 +646,9 @@ while running:
             is_busy = True
             if not is_sit:
                 if right_orient:
-                    screen.blit(arm_right[len(arm_right) - arm_anim_count - 1], (player_x, player_y))
+                    screen.blit(arm_right[len(arm_right) - arm_anim_count - 1], (player.x, player.y))
                 if not right_orient:
-                    screen.blit(arm_left[len(arm_right) - arm_anim_count - 1], (player_x, player_y))
+                    screen.blit(arm_left[len(arm_right) - arm_anim_count - 1], (player.x, player.y))
                 arm_anim_timer += 1
                 if arm_anim_count == 12 and arm_anim_timer == 1:
                     arm_anim_count = 0
@@ -661,9 +661,9 @@ while running:
                     arm_anim_timer = 0
             else:
                 if right_orient:
-                    screen.blit(sit_arm_right[len(sit_arm_right) - arm_anim_count - 1], (player_x+8, player_y))
+                    screen.blit(sit_arm_right[len(sit_arm_right) - arm_anim_count - 1], (player.x+8, player.y))
                 if not right_orient:
-                    screen.blit(sit_arm_left[len(sit_arm_left) - arm_anim_count - 1], (player_x-8, player_y))
+                    screen.blit(sit_arm_left[len(sit_arm_left) - arm_anim_count - 1], (player.x-8, player.y))
                 arm_anim_timer += 1
                 if arm_anim_count == 9 and arm_anim_timer == 1:
                     arm_anim_count = 0
@@ -681,9 +681,9 @@ while running:
                 blaster_sound.play()
             if is_sit:
                 if right_orient:
-                    screen.blit(sit_shoot_right[shoot_anim_count], (player_x + 12, player_y))
+                    screen.blit(sit_shoot_right[shoot_anim_count], (player.x + 12, player.y))
                 if not right_orient:
-                    screen.blit(sit_shoot_left[shoot_anim_count], (player_x - 10, player_y))
+                    screen.blit(sit_shoot_left[shoot_anim_count], (player.x - 10, player.y))
                 shoot_anim_timer += 1
                 if shoot_anim_count == 5 and shoot_anim_timer == 2:
                     shoot_anim_count = 0
@@ -695,9 +695,9 @@ while running:
                     shoot_anim_timer = 0
             else:
                 if right_orient:
-                    screen.blit(shoot_right[shoot_anim_count], (player_x + 12, player_y))
+                    screen.blit(shoot_right[shoot_anim_count], (player.x + 12, player.y))
                 if not right_orient:
-                    screen.blit(shoot_left[shoot_anim_count], (player_x - 10, player_y))
+                    screen.blit(shoot_left[shoot_anim_count], (player.x - 10, player.y))
                 shoot_anim_timer += 1
                 if shoot_anim_count == 8 and shoot_anim_timer == 2:
                     shoot_anim_count = 0
@@ -714,29 +714,29 @@ while running:
                 is_busy = True
             if is_sit:
                 is_sit_up = True
-                player_y -= 28
+                player.y -= 28
                 is_sit = False
                 is_busy = True
             else:
-                screen.blit(player, (player_x, player_y))
+                screen.blit(hero, (player.x, player.y))
 
         elif keys[pygame.K_DOWN] and not is_busy:
             if not is_armed:
                 if right_orient:
                     for ledge in ledges_left[bg_x][bg_y]:
-                        if player_x + 21 > ledge.rect.left and player_x + 21 < ledge.rect.right and ledge.rect.top - player_y < 90 and ledge.rect.top - player_y > 35:
+                        if player.x + 21 > ledge.rect.left and player.x + 21 < ledge.rect.right and ledge.rect.top - player.y < 90 and ledge.rect.top - player.y > 35:
                             is_climb_down = True
                             is_busy = True
                 if not right_orient:
                     for ledge in ledges_right[bg_x][bg_y]:
-                        if player_x + 21 > ledge.rect.left and player_x + 21 < ledge.rect.right and ledge.rect.top - player_y < 90 and ledge.rect.top - player_y > 35:
+                        if player.x + 21 > ledge.rect.left and player.x + 21 < ledge.rect.right and ledge.rect.top - player.y < 90 and ledge.rect.top - player.y > 35:
                             is_climb_down = True
                             is_busy = True
             if not is_climb_down and not is_sit:
                 is_sit_down = True
                 is_busy = True
             else:
-                screen.blit(player, (player_x, player_y))
+                screen.blit(hero, (player.x, player.y))
 
         elif keys[pygame.K_n] and not is_busy and not is_sit and not is_armed:
             is_busy = True
@@ -747,47 +747,47 @@ while running:
             is_busy = True
             if not is_sit:
                 if right_orient:
-                    player = player_armed_right
+                    hero = player.armed_right
                 if not right_orient:
-                    player = player_armed_left
+                    hero = player.armed_left
             else:
                 if right_orient:
-                    player = player_sit_armed_right
+                    hero = player.sit_armed_right
                 if not right_orient:
-                    player = player_sit_armed_left
+                    hero = player.sit_armed_left
 
         elif keys[pygame.K_SPACE] and not is_busy and is_armed:
             is_arm = True
             is_busy = True
             if not is_sit:
                 if right_orient:
-                    player = player_stay_right
+                    hero = player.stay_right
                 if not right_orient:
-                    player = player_stay_left
+                    hero = player.stay_left
             else:
                 if right_orient:
-                    player = player_sit_right
+                    hero = player.sit_right
                 if not right_orient:
-                    player = player_sit_left
+                    hero = player.sit_left
 
         elif keys[pygame.K_b] and is_armed and not is_busy:
             if is_sit:
                 if right_orient:
-                    bullets_right.append(bullet.get_rect(topleft=(player_x + 30, player_y + 6)))
+                    bullets_right.append(bullet.get_rect(topleft=(player.x + 30, player.y + 6)))
                 else:
-                    bullets_left.append(bullet.get_rect(topleft=(player_x, player_y + 6)))
+                    bullets_left.append(bullet.get_rect(topleft=(player.x, player.y + 6)))
             else:
                 if right_orient:
-                    bullets_right.append(bullet.get_rect(topleft=(player_x + 30, player_y + 14)))
+                    bullets_right.append(bullet.get_rect(topleft=(player.x + 30, player.y + 14)))
                 else:
-                    bullets_left.append(bullet.get_rect(topleft=(player_x, player_y + 14)))
+                    bullets_left.append(bullet.get_rect(topleft=(player.x, player.y + 14)))
             is_shoot = True
             is_busy = True
 
         elif keys[pygame.K_LEFT] and not is_busy and not is_sit and not is_armed:
-            screen.blit(walk_left[walk_anim_count], (player_x, player_y))
+            screen.blit(walk_left[walk_anim_count], (player.x, player.y))
             right_orient = False
-            player_x -= walk_speed
+            player.x -= player.walk_speed
             walk_anim_timer += 1
             if walk_anim_count == 11 and walk_anim_timer == 3:
                 walk_anim_count = 0
@@ -797,9 +797,9 @@ while running:
                 walk_anim_timer = 0
 
         elif keys[pygame.K_LEFT] and not is_busy and not is_sit and is_armed:
-            screen.blit(walk_armed_left[walk_armed_anim_count], (player_x, player_y))
+            screen.blit(walk_armed_left[walk_armed_anim_count], (player.x, player.y))
             right_orient = False
-            player_x -= walk_armed_speed
+            player.x -= player.walk_armed_speed
             walk_armed_anim_timer += 1
             if walk_armed_anim_count == 14 and walk_armed_anim_timer == 2:
                 walk_armed_anim_count = 0
@@ -825,9 +825,9 @@ while running:
                 is_somersault = True
 
         elif keys[pygame.K_RIGHT] and not is_busy and not is_sit and not is_armed:
-            screen.blit(walk_right[walk_anim_count], (player_x, player_y))
+            screen.blit(walk_right[walk_anim_count], (player.x, player.y))
             right_orient = True
-            player_x += walk_speed
+            player.x += player.walk_speed
             walk_anim_timer += 1
             if walk_anim_count == 11 and walk_anim_timer == 3:
                 walk_anim_count = 0
@@ -837,9 +837,9 @@ while running:
                 walk_anim_timer = 0
 
         elif keys[pygame.K_RIGHT] and not is_busy and not is_sit and is_armed:
-            screen.blit(walk_armed_right[walk_armed_anim_count], (player_x, player_y))
+            screen.blit(walk_armed_right[walk_armed_anim_count], (player.x, player.y))
             right_orient = True
-            player_x += walk_armed_speed
+            player.x += player.walk_armed_speed
             walk_armed_anim_timer += 1
             if walk_armed_anim_count == 14 and walk_armed_anim_timer == 2:
                 walk_armed_anim_count = 0
@@ -849,17 +849,17 @@ while running:
                 walk_armed_anim_timer = 0
 
         else:
-            screen.blit(player, (player_x, player_y))
+            screen.blit(hero, (player.x, player.y))
 
         if keys[pygame.K_s] and not is_delay:
             is_delay = True
-            send_save_thread = threading.Thread(target=send_save(nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y, scene_count))
+            send_save_thread = threading.Thread(target=send_save(player.nickname, player.x, player.y, player.hp, hp_max, player.damage, player.experience, player.level, bg_x, bg_y, scene_count))
             send_save_thread.start()
 
         if keys[pygame.K_l] and not is_delay:
             is_delay = True
             try:
-                game_loaded, nickname, player_x, player_y, hp, hp_max, player_damage, experience, level, bg_x, bg_y, scene_count = request_save(nickname)
+                game_loaded, player.nickname, player.x, player.y, hp, hp_max, player.damage, player.experience, player.level, bg_x, bg_y, scene_count = request_save(player.nickname)
             except:
                 pass
 
@@ -889,13 +889,13 @@ while running:
                     else:
                         if item.name == 'key':
                             for door in doors[bg_x][bg_y]:
-                                if player_rect.colliderect(door.rect):
+                                if player.rect.colliderect(door.rect):
                                     if scene_count < 4:
                                         bg_x += 1
                                     scene = True
                                     scene_count += 1
                                     key_card_sound.play()
-                                    player_x = 30
+                                    player.x = 30
                                     if border_x == 588 - (len(inventory_list) - 1) * 20 and (len(inventory_list) > 1):
                                         border_x += 20
                                         border_pos -= 1
@@ -944,25 +944,25 @@ while running:
                 delay_timer = 0
 
         if right_orient and is_sit and ((is_arm and not is_armed) or is_armed):
-            player = player_sit_armed_right
+            hero = player.sit_armed_right
         if not right_orient and is_sit and ((is_arm and not is_armed) or is_armed):
-            player = player_sit_armed_left
+            hero = player.sit_armed_left
         if right_orient and not is_armed and not is_sit:
-            player = player_stay_right
+            hero = player.stay_right
         if not right_orient and not is_armed and not is_sit:
-            player = player_stay_left
+            hero = player.stay_left
         if right_orient and is_armed and not is_sit:
-            player = player_armed_right
+            hero = player.armed_right
         if not right_orient and is_armed and not is_sit:
-            player = player_armed_left
+            hero = player.armed_left
         if right_orient and is_sit and not is_arm and not is_armed:
-            player = player_sit_right
+            hero = player.sit_right
         if not right_orient and is_sit and not is_arm and not is_armed:
-            player = player_sit_left
+            hero = player.sit_left
 
-        if player_x > screen_width-1:
+        if player.x > screen_width-1:
             bg_x += 1
-            player_x = 10
+            player.x = 10
             for i, archer in enumerate(archers_list_in_game):
                 if archer.bg_x == bg_x - 1 and archer.bg_y == bg_y:
                     archer.hp = archer.hp_max
@@ -1002,9 +1002,9 @@ while running:
             pellets_right.clear()
             pellets_left.clear()
 
-        if player_x < 0 and bg_x != 0:
+        if player.x < 0 and bg_x != 0:
             bg_x -= 1
-            player_x = screen_width - 10
+            player.x = screen_width - 10
             for i, archer in enumerate(archers_list_in_game):
                 if archer.bg_x == bg_x + 1 and archer.bg_y == bg_y:
                     archer.hp = archer.hp_max
@@ -1044,9 +1044,9 @@ while running:
             pellets_right.clear()
             pellets_left.clear()
 
-        if player_y > screen_height:
+        if player.y > screen_height:
             bg_y += 1
-            player_y = player_y - screen_height
+            player.y = player.y - screen_height
             for i, archer in enumerate(archers_list_in_game):
                 if archer.bg_x == bg_x and archer.bg_y == bg_y - 1:
                     archer.hp = archer.hp_max
@@ -1086,9 +1086,9 @@ while running:
             pellets_right.clear()
             pellets_left.clear()
 
-        if player_y < 0 and bg_y != 0:
+        if player.y < 0 and bg_y != 0:
             bg_y -= 1
-            player_y = player_y + screen_height
+            player.y = player.y + screen_height
             for i, archer in enumerate(archers_list_in_game):
                 if archer.bg_x == bg_x and archer.bg_y == bg_y + 1:
                     archer.hp = archer.hp_max
@@ -1148,10 +1148,10 @@ while running:
                 if archers_list_in_game:
                     for (index, archer) in enumerate(archers_list_in_game):
                         if archer.alive and el.colliderect(archer.archer_stay_left.get_rect(topleft=(archer.x, archer.y))):
-                            archer.decrease_hp(player_damage)
+                            archer.decrease_hp(player.damage)
                             if archer.hp <= 0:
                                 archer.hp = archer.hp_max
-                                experience += archer.exp
+                                player.experience += archer.exp
                                 archer.alive = False
                             try:
                                 bullets_right.pop(i)
@@ -1161,10 +1161,10 @@ while running:
                 if soldiers_list_in_game:
                     for (index, soldier) in enumerate(soldiers_list_in_game):
                         if soldier.alive and el.colliderect(soldier.soldier_stay_left.get_rect(topleft=(soldier.x, soldier.y))):
-                            soldier.decrease_hp(player_damage)
+                            soldier.decrease_hp(player.damage)
                             if soldier.hp <= 0:
                                 soldier.hp = soldier.hp_max
-                                experience += soldier.exp
+                                player.experience += soldier.exp
                                 soldier.alive = False
                             try:
                                 bullets_right.pop(i)
@@ -1174,10 +1174,10 @@ while running:
                 if fly_list_in_game:
                     for (index, fly) in enumerate(fly_list_in_game):
                         if fly.alive and el.colliderect(fly.fly_stay_left.get_rect(topleft=(fly.x, fly.y))):
-                            fly.decrease_hp(player_damage)
+                            fly.decrease_hp(player.damage)
                             if fly.hp <= 0:
                                 fly.hp = fly.hp_max
-                                experience += fly.exp
+                                player.experience += fly.exp
                                 fly.alive = False
                             try:
                                 bullets_right.pop(i)
@@ -1187,10 +1187,10 @@ while running:
                 if aliens_list_in_game:
                     for (index, alien) in enumerate(aliens_list_in_game):
                         if alien.alive and el.colliderect(alien.alien_stay_left.get_rect(topleft=(alien.x, alien.y))):
-                            alien.decrease_hp(player_damage)
+                            alien.decrease_hp(player.damage)
                             if alien.hp <= 0:
                                 alien.hp = alien.hp_max
-                                experience += alien.exp
+                                player.experience += alien.exp
                                 alien.alive = False
                             try:
                                 bullets_right.pop(i)
@@ -1214,7 +1214,7 @@ while running:
                     except:
                         pass
 
-                if el.colliderect(player_rect):
+                if el.colliderect(player.rect):
                     hp -= archer_1.damage
                     try:
                         arrows_right.pop(i)
@@ -1238,7 +1238,7 @@ while running:
                     except:
                         pass
 
-                if el.colliderect(player_rect):
+                if el.colliderect(player.rect):
                     hp -= soldier_1.damage
                     try:
                         pellets_right.pop(i)
@@ -1265,10 +1265,10 @@ while running:
                 if archers_list_in_game:
                     for (index, archer) in enumerate(archers_list_in_game):
                         if archer.alive and el.colliderect(archer.archer_stay_left.get_rect(topleft=(archer.x, archer.y))):
-                            archer.decrease_hp(player_damage)
+                            archer.decrease_hp(player.damage)
                             if archer.hp <= 0:
                                 archer.hp = archer.hp_max
-                                experience += archer.exp
+                                player.experience += archer.exp
                                 archer.alive = False
                             try:
                                 bullets_left.pop(i)
@@ -1278,10 +1278,10 @@ while running:
                 if soldiers_list_in_game:
                     for (index, soldier) in enumerate(soldiers_list_in_game):
                         if soldier.alive and el.colliderect(soldier.soldier_stay_left.get_rect(topleft=(soldier.x, soldier.y))):
-                            soldier.decrease_hp(player_damage)
+                            soldier.decrease_hp(player.damage)
                             if soldier.hp <= 0:
                                 soldier.hp = soldier.hp_max
-                                experience += soldier.exp
+                                player.experience += soldier.exp
                                 soldier.alive = False
                             try:
                                 bullets_left.pop(i)
@@ -1291,10 +1291,10 @@ while running:
                 if fly_list_in_game:
                     for (index, fly) in enumerate(fly_list_in_game):
                         if fly.alive and el.colliderect(fly.fly_stay_right.get_rect(topleft=(fly.x, fly.y))):
-                            fly.decrease_hp(player_damage)
+                            fly.decrease_hp(player.damage)
                             if fly.hp <= 0:
                                 fly.hp = fly.hp_max
-                                experience += fly.exp
+                                player.experience += fly.exp
                                 fly.alive = False
                             try:
                                 bullets_left.pop(i)
@@ -1304,10 +1304,10 @@ while running:
                 if aliens_list_in_game:
                     for (index, alien) in enumerate(aliens_list_in_game):
                         if alien.alive and el.colliderect(alien.alien_stay_right.get_rect(topleft=(alien.x, alien.y))):
-                            alien.decrease_hp(player_damage)
+                            alien.decrease_hp(player.damage)
                             if alien.hp <= 0:
                                 alien.hp = alien.hp_max
-                                experience += alien.exp
+                                player.experience += alien.exp
                                 alien.alive = False
                             try:
                                 bullets_left.pop(i)
@@ -1331,7 +1331,7 @@ while running:
                     except:
                         pass
 
-                if el.colliderect(player_rect):
+                if el.colliderect(player.rect):
                     hp -= archer_1.damage
                     try:
                         arrows_left.pop(i)
@@ -1355,7 +1355,7 @@ while running:
                     except:
                         pass
 
-                if el.colliderect(player_rect):
+                if el.colliderect(player.rect):
                     hp -= soldier_1.damage
                     try:
                         pellets_left.pop(i)
@@ -1374,14 +1374,14 @@ while running:
             mouse = pygame.mouse.get_pos()
             if restart_label_rect.collidepoint(mouse) and pygame.mouse.get_pressed()[0]:
                 gameplay = True
-                player_x = 50
-                player_y = 142
+                player.x = 50
+                player.y = 142
                 bg_x = 0
                 bg_y = 0
                 hp = 100
                 hp_max = 100
-                level = 1
-                experience = 0
+                player.level = 1
+                player.experience = 0
                 scene_count = 1
                 archers_list_in_game = [archer_1]
                 fly_list_in_game = [fly_1]

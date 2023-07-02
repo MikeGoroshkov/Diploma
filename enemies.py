@@ -7,7 +7,28 @@ arrow = archer_sheet.subsurface(pygame.Rect((662,710), (46, 17)))
 arrows_right = []
 arrows_left = []
 
-class Archer(pygame.sprite.Sprite):
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, x, y, bg_x, bg_y, lev):
+        super().__init__()
+        self.lev = lev
+        self.x = x
+        self.y = y
+        self.bg_x = bg_x
+        self.bg_y = bg_y
+        self.alive = True
+        self.damage = 30 * self.lev
+        self.hp_max = 100 * self.lev
+        self.hp = 100 * self.lev
+        self.exp = 30 * self.lev
+
+        def decrease_hp(self, player_damage):
+            self.hp -= player_damage
+            if self.hp < 0:
+                self.hp = 0
+            if self.hp > self.hp_max:
+                self.hp = self.hp_max
+
+class Archer(Enemy):
     def __init__(self, x, y, bg_x, bg_y, lev):
         super().__init__()
         self.lev = lev
@@ -22,12 +43,7 @@ class Archer(pygame.sprite.Sprite):
         self.exp = 30 * self.lev
         self.archer_stay_right = archer_sheet.subsurface(pygame.Rect((3,4), (57, 78)))
         self.archer_stay_left = pygame.transform.flip(archer_sheet.subsurface(pygame.Rect((3,4), (57, 78))), True, False)
-    def decrease_hp(self, player_damage):
-        self.hp -= player_damage
-        if self.hp < 0:
-            self.hp = 0
-        if self.hp > self.hp_max:
-            self.hp = self.hp_max
+
 
 archer_1 = Archer(520, 22, 0, 0, 1)
 archer_2 = Archer(500, 262, 1, 0, 1)
@@ -59,7 +75,7 @@ archer_died_right = [archer_sheet.subsurface(pygame.Rect(pos, (archer_died_frame
 archer_died_left = [pygame.transform.flip(archer_sheet.subsurface(pygame.Rect(pos, (archer_died_frame_width, archer_died_frame_height))), True, False) for pos in archer_died_pos]
 
 fly_sheet = pygame.image.load('images/fly.png')
-class Fly(pygame.sprite.Sprite):
+class Fly(Enemy):
     def __init__(self, x_0, y_0, bg_x, bg_y, width, lev):
         super().__init__()
         self.lev = lev
@@ -71,19 +87,13 @@ class Fly(pygame.sprite.Sprite):
         self.bg_x = bg_x
         self.bg_y = bg_y
         self.width = width
-        self.alive = True
         self.damage = 30 * self.lev
         self.hp_max = 60 * self.lev
         self.hp = 60 * self.lev
         self.exp = 20 * self.lev
         self.fly_stay_right = fly_sheet.subsurface(pygame.Rect((10,0), (52, 47)))
         self.fly_stay_left = pygame.transform.flip(fly_sheet.subsurface(pygame.Rect((10,0), (52, 47))), True, False)
-    def decrease_hp(self, player_damage):
-        self.hp -= player_damage
-        if self.hp < 0:
-            self.hp = 0
-        if self.hp > self.hp_max:
-            self.hp = self.hp_max
+
 
 fly_frame_height = 47
 fly_frame_width = 52
@@ -118,7 +128,7 @@ soldier_sheet = pygame.image.load('images/soldier.png')
 pellet = pygame.image.load('images/pellet.png')
 pellets_right = []
 pellets_left = []
-class Soldier(pygame.sprite.Sprite):
+class Soldier(Enemy):
     def __init__(self, x, y, bg_x, bg_y, lev):
         super().__init__()
         self.lev = lev
@@ -133,12 +143,7 @@ class Soldier(pygame.sprite.Sprite):
         self.exp = 50 * self.lev
         self.soldier_stay_right = soldier_sheet.subsurface(pygame.Rect((10,2), (76, 78)))
         self.soldier_stay_left = pygame.transform.flip(soldier_sheet.subsurface(pygame.Rect((3,2), (57, 78))), True, False)
-    def decrease_hp(self, player_damage):
-        self.hp -= player_damage
-        if self.hp < 0:
-            self.hp = 0
-        if self.hp > self.hp_max:
-            self.hp = self.hp_max
+
 
 soldier_1 = Soldier(400, 22, 4, 1, 1)
 soldier_2 = Soldier(100, 142, 5, 1, 1)
@@ -175,7 +180,7 @@ soldier_died_left = [pygame.transform.flip(soldier_sheet.subsurface(pygame.Rect(
 
 
 alien_sheet = pygame.image.load('images/alien.png')
-class Alien(pygame.sprite.Sprite):
+class Alien(Enemy):
     def __init__(self, x_0, y_0, bg_x, bg_y, width, lev):
         super().__init__()
         self.lev = lev
@@ -195,12 +200,6 @@ class Alien(pygame.sprite.Sprite):
         self.exp = 70 * self.lev
         self.alien_stay_right = alien_sheet.subsurface(pygame.Rect((10,2), (76, 78)))
         self.alien_stay_left = pygame.transform.flip(alien_sheet.subsurface(pygame.Rect((3,2), (57, 78))), True, False)
-    def decrease_hp(self, player_damage):
-        self.hp -= player_damage
-        if self.hp < 0:
-            self.hp = 0
-        if self.hp > self.hp_max:
-            self.hp = self.hp_max
 
 alien_walk_frame_height = 92
 alien_walk_frame_width = 58

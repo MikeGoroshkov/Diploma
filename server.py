@@ -11,7 +11,7 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((host, port))
 server.listen()
 
-# Lists For Clients and Their Nicknames
+# Lists For Clients and Their player.nicknames
 saves = []
 
 def send(client, save):
@@ -33,15 +33,15 @@ def receive():
                     if save.split(";")[0] == input_message.split()[1]:
                         thread = threading.Thread(target=send, args=(client, save))
                         thread.start()
-                        nickname = input_message.split()[1]
-                        print(f"Sent save to {nickname}:{address}")
+                        player.nickname = input_message.split()[1]
+                        print(f"Sent save to {player.nickname}:{address}")
             else:
                 for i, save in enumerate(saves):
                     if save.split(";")[0] == input_message.split(";")[0]:
                         saves.pop(i)
                 saves.append(input_message)
-                nickname = input_message.split(";")[0]
-                print(f"Wrote save from {nickname}:{address}")
+                player.nickname = input_message.split(";")[0]
+                print(f"Wrote save from {player.nickname}:{address}")
                 print(saves)
         except:
             print("Incorrect data from the client")

@@ -2,39 +2,63 @@ import pygame
 
 spritesheet = pygame.image.load('images/flash_new.png')
 
-class player
+class Player:
+    def __init__(self):
+        self.nickname = "player_1"
+        self.x = 50
+        self.y = 142
+        self.walk_speed = 3
+        self.walk_armed_speed = 2
+        self.hp = 100
+        self.hp_max = 100
+        self.damage = 25
+        self.experience = 0
+        self.level = 1
+        self.bg_x = 0
+        self.bg_y = 0
+        self.stay_right = spritesheet.subsurface(pygame.Rect((0, 6), (43, 78)))
+        self.stay_left = pygame.transform.flip(spritesheet.subsurface(pygame.Rect((0, 6), (43, 78))), True, False)
+        self.armed_right = spritesheet.subsurface(pygame.Rect((10, 3802), (43, 78)))
+        self.armed_left = pygame.transform.flip(spritesheet.subsurface(pygame.Rect((10, 3802), (43, 78))), True, False)
+        self.sit_right = spritesheet.subsurface(pygame.Rect((274, 1189), (43, 50)))
+        self.sit_left = pygame.transform.flip(spritesheet.subsurface(pygame.Rect((274, 1189), (43, 50))), True, False)
+        self.sit_armed_right = spritesheet.subsurface(pygame.Rect((10, 4618), (50, 50)))
+        self.sit_armed_left = pygame.transform.flip(spritesheet.subsurface(pygame.Rect((10, 4618), (50, 50))), True, False)
+        self.is_fall = True
+        self.is_jump = False
+        self.is_jump_up = False
+        self.is_jump_down = False
+        self.is_busy = False
+        self.is_arm = False
+        self.is_armed = False
+        self.is_shoot = False
+        self.on_platform = False
+        self.is_climb = False
+        self.is_climb_down = False
+        self.is_wounded = False
+        self.is_getup = False
+        self.is_sit_down = False
+        self.is_sit_up = False
+        self.is_sit = False
+        self.is_somersault = False
+        self.is_sit_turn = False
+        self.right_orient = True
 
-player_stay_right = spritesheet.subsurface(pygame.Rect((0,6), (43, 78)))
-player_stay_left = pygame.transform.flip(spritesheet.subsurface(pygame.Rect((0,6), (43, 78))), True, False)
-player_armed_right = spritesheet.subsurface(pygame.Rect((10,3802), (43, 78)))
-player_armed_left = pygame.transform.flip(spritesheet.subsurface(pygame.Rect((10,3802), (43, 78))), True, False)
-player_sit_right = spritesheet.subsurface(pygame.Rect((274,1189), (43, 50)))
-player_sit_left = pygame.transform.flip(spritesheet.subsurface(pygame.Rect((274,1189), (43, 50))), True, False)
-player_sit_armed_right = spritesheet.subsurface(pygame.Rect((10, 4618), (50, 50)))
-player_sit_armed_left = pygame.transform.flip(spritesheet.subsurface(pygame.Rect((10, 4618), (50, 50))), True, False)
+player = Player()
+
 
 bullet = pygame.image.load('images/bullet.png')
 bullets_right = []
 bullets_left = []
 
-walk_speed = 3
-walk_armed_speed = 2
-player_x = 50
-player_y = 142
-hp = 100
-hp_max = 100
-player_damage = 25
-experience = 0
-level = 1
-nickname = "Player_1"
 
 hp_line_icon = pygame.image.load('images/hp_line.png')
 hp_icon = pygame.image.load('images/hp.png')
 exp_icon = pygame.image.load('images/exp.png')
 exp_line_icon = pygame.image.load('images/exp_line.png')
 
-player_anim_count = 0
-player_anim_timer = 0
+player.anim_count = 0
+player.anim_timer = 0
 walk_anim_count = 0
 walk_anim_timer = 0
 walk_armed_anim_count = 0
@@ -64,26 +88,8 @@ somersault_anim_count = 0
 somersault_anim_timer = 0
 sit_turn_anim_count = 0
 sit_turn_anim_timer = 0
-is_fall = True
-is_jump = False
-is_jump_up = False
-is_jump_down = False
-is_busy = False
-is_arm = False
-is_armed = False
-is_shoot = False
-on_platform = False
-is_climb = False
-is_climb_down = False
-is_wounded = False
-is_getup = False
-is_sit_down = False
-is_sit_up = False
-is_sit = False
-is_somersault = False
-is_sit_turn = False
-player = player_stay_right
-right_orient = True
+
+hero = player.stay_right
 
 walk_armed_frame_width = 43
 walk_armed_frame_height = 78
