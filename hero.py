@@ -2,6 +2,8 @@ import pygame
 
 spritesheet = pygame.image.load('images/flash_new.png')
 
+class player
+
 player_stay_right = spritesheet.subsurface(pygame.Rect((0,6), (43, 78)))
 player_stay_left = pygame.transform.flip(spritesheet.subsurface(pygame.Rect((0,6), (43, 78))), True, False)
 player_armed_right = spritesheet.subsurface(pygame.Rect((10,3802), (43, 78)))
