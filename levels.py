@@ -19,8 +19,6 @@ bg_6 = pygame.image.load(f'images/back_6.png').convert_alpha()
 bg_7 = pygame.image.load(f'images/back_7.png').convert_alpha()
 bg_8 = pygame.image.load(f'images/back_8.png').convert_alpha()
 bg = [[bg_1, bg_2, bg_3, bg_4, bg_5, bg_6, bg_7, bg_8], [bg_1, bg_2, bg_3, bg_4, bg_5, bg_6, bg_7, bg_8]]
-bg_x = 0
-bg_y = 0
 
 class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, color):

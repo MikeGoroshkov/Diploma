@@ -21,28 +21,22 @@ class Enemy(pygame.sprite.Sprite):
         self.hp = 100 * self.lev
         self.exp = 30 * self.lev
 
-        def decrease_hp(self, player_damage):
-            self.hp -= player_damage
-            if self.hp < 0:
-                self.hp = 0
-            if self.hp > self.hp_max:
-                self.hp = self.hp_max
+    def decrease_hp(self, player_damage):
+        self.hp -= player_damage
+        if self.hp < 0:
+            self.hp = 0
+        if self.hp > self.hp_max:
+            self.hp = self.hp_max
 
 class Archer(Enemy):
     def __init__(self, x, y, bg_x, bg_y, lev):
-        super().__init__()
-        self.lev = lev
-        self.x = x
-        self.y = y
-        self.bg_x = bg_x
-        self.bg_y = bg_y
-        self.alive = True
+        super().__init__(x, y, bg_x, bg_y, lev)
+        self.archer_stay_right = archer_sheet.subsurface(pygame.Rect((3,4), (57, 78)))
+        self.archer_stay_left = pygame.transform.flip(archer_sheet.subsurface(pygame.Rect((3,4), (57, 78))), True, False)
         self.damage = 30 * self.lev
         self.hp_max = 100 * self.lev
         self.hp = 100 * self.lev
         self.exp = 30 * self.lev
-        self.archer_stay_right = archer_sheet.subsurface(pygame.Rect((3,4), (57, 78)))
-        self.archer_stay_left = pygame.transform.flip(archer_sheet.subsurface(pygame.Rect((3,4), (57, 78))), True, False)
 
 
 archer_1 = Archer(520, 22, 0, 0, 1)
@@ -77,15 +71,12 @@ archer_died_left = [pygame.transform.flip(archer_sheet.subsurface(pygame.Rect(po
 fly_sheet = pygame.image.load('images/fly.png')
 class Fly(Enemy):
     def __init__(self, x_0, y_0, bg_x, bg_y, width, lev):
-        super().__init__()
-        self.lev = lev
+        super().__init__(x_0, y_0, bg_x, bg_y, lev)
         self.x_0 = x_0
         self.y_0 = y_0
         self.x = self.x_0
         self.y = self.y_0
         self.right = False
-        self.bg_x = bg_x
-        self.bg_y = bg_y
         self.width = width
         self.damage = 30 * self.lev
         self.hp_max = 60 * self.lev
@@ -130,13 +121,7 @@ pellets_right = []
 pellets_left = []
 class Soldier(Enemy):
     def __init__(self, x, y, bg_x, bg_y, lev):
-        super().__init__()
-        self.lev = lev
-        self.x = x
-        self.y = y
-        self.bg_x = bg_x
-        self.bg_y = bg_y
-        self.alive = True
+        super().__init__(x, y, bg_x, bg_y, lev)
         self.damage = 20 * self.lev
         self.hp_max = 120 * self.lev
         self.hp = 120 * self.lev
@@ -182,17 +167,13 @@ soldier_died_left = [pygame.transform.flip(soldier_sheet.subsurface(pygame.Rect(
 alien_sheet = pygame.image.load('images/alien.png')
 class Alien(Enemy):
     def __init__(self, x_0, y_0, bg_x, bg_y, width, lev):
-        super().__init__()
-        self.lev = lev
+        super().__init__(x_0, y_0, bg_x, bg_y, lev)
         self.x_0 = x_0
         self.y_0 = y_0
         self.x = self.x_0
         self.y = self.y_0
-        self.right = False
-        self.bg_x = bg_x
-        self.bg_y = bg_y
         self.width = width
-        self.alive = True
+        self.right = False
         self.shock = False
         self.damage = 40 * self.lev
         self.hp_max = 140 * self.lev

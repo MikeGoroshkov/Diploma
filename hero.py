@@ -43,6 +43,11 @@ class Player:
         self.is_somersault = False
         self.is_sit_turn = False
         self.right_orient = True
+        self.hp_line_icon = pygame.image.load('images/hp_line.png')
+        self.hp_icon = pygame.image.load('images/hp.png')
+        self.exp_icon = pygame.image.load('images/exp.png')
+        self.exp_line_icon = pygame.image.load('images/exp_line.png')
+        self.falling_high = 0
 
 player = Player()
 
@@ -51,11 +56,6 @@ bullet = pygame.image.load('images/bullet.png')
 bullets_right = []
 bullets_left = []
 
-
-hp_line_icon = pygame.image.load('images/hp_line.png')
-hp_icon = pygame.image.load('images/hp.png')
-exp_icon = pygame.image.load('images/exp.png')
-exp_line_icon = pygame.image.load('images/exp_line.png')
 
 player.anim_count = 0
 player.anim_timer = 0
@@ -75,7 +75,6 @@ falling_anim_count = 0
 falling_anim_timer = 0
 wound_anim_count = 0
 wound_anim_timer = 0
-falling_high = 0
 getup_anim_count = 0
 getup_anim_timer = 0
 climb_anim_count = 0
