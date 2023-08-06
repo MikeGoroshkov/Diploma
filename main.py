@@ -579,12 +579,12 @@ while running:
                 jump_up_anim_timer = 0
                 player.is_jump_up = False
                 if player.right_orient:
-                    for ledge in ledges_left[bg_x][bg_y]:
+                    for ledge in ledges_left[player.bg_x][player.bg_y]:
                         if player.x + 21 > ledge.rect.left and player.x + 21 < ledge.rect.right - 10 and player.y - ledge.rect.top < 50:
                             player.is_climb = True
                             player.is_busy = True
                 if not player.right_orient:
-                    for ledge in ledges_right[bg_x][bg_y]:
+                    for ledge in ledges_right[player.bg_x][player.bg_y]:
                         if player.x + 21 > ledge.rect.left and player.x + 21 < ledge.rect.right - 10 and player.y - ledge.rect.top < 50:
                             player.is_climb = True
                             player.is_busy = True
